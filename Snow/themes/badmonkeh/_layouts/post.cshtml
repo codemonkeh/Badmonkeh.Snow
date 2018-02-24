@@ -1,0 +1,43 @@
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<Snow.ViewModels.PostViewModel>
+@using System.Collections.Generic
+@{
+  Layout = "default.cshtml";
+}
+
+<article class="post type-post status-publish format-standard hentry">
+    <header class="entry-header">
+        <h1 class="entry-title">@Model.Title</h1>
+
+        <div class="entry-meta">
+            <span class="sep">Posted on </span>@Model.PostDate.ToString("dd MMM yyyy")
+        </div><!-- .entry-meta -->
+    </header><!-- .entry-header -->
+
+    <div class="entry-content">
+        @Html.RenderSeries()
+
+        @Html.Raw(Model.PostContent)
+    </div><!-- .entry-content -->   
+    
+    <footer class="entry-meta">
+        <span class="cat-links">
+		<span class="entry-utility-prep entry-utility-prep-cat-links">Posted in</span>
+			@foreach(var category in Model.Categories) {
+				<a href="/category/@category.Url" title="@category" rel="category tag">@category.Name</a><text>,</text>
+			}
+        </span>
+        <span class="sep"> | </span>
+        <span class="tag-links">
+            <span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+				@foreach(var tag in Model.Tags) {
+					<a href="/tag/@tag.Url" title="@tag" rel="tag">@tag.Name</a><text>,</text>
+			}
+        </span>
+
+        @*<span class="sep"> | </span>
+        <span class="comments-link"><a href="http://localhost/WordPress/blog/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/#respond"><span class="leave-reply">Leave a reply</span></a></span>*@
+
+		@Html.RenderDisqusComments("badmonkehblog")
+    </footer><!-- .entry-meta -->
+	
+</article>

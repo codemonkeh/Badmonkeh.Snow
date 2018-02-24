@@ -1,0 +1,17 @@
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<Snow.ViewModels.ContentViewModel>
+@using System.Collections.Generic
+@{
+  Layout = "default.cshtml";
+}
+
+  <header>
+  <div class="head-inner">
+    <h1>Tags</h1>
+  </div>
+  </header>
+  
+  <ul class="tag-list">
+    @foreach(var tag in Model.AllTags){
+      <li><a href="/tag/@tag.Url" title="@tag.Name">@tag.Name</a></li>
+    }
+  </ul>

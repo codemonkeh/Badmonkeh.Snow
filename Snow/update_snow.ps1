@@ -1,0 +1,1 @@
+Copy-Item ..\..\Sandra.Snow\src\Snow\bin\Debug\Snow.exe _compiler\Snow.exe
