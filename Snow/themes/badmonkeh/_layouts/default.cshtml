@@ -65,9 +65,9 @@
             </div>
             <!-- #primary .site-content -->
 			
-			<div id="secondary" class="widget-area" role="complementary">
-				<aside id="text-2" class="widget widget_text">
-					<h3 class="widget-title">About me</h3>			
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="text-2" class="widget widget_text">
+                    <h3 class="widget-title">About me</h3>
                     <div class="textwidget">
                         <a href="/about"><img src="/images/profile/me.jpg" border="0"></a>
                         <p>Hi, i'm Christian Froehlich.</p>
@@ -76,48 +76,57 @@
                         </p>
                         <p>I'm also interested in photography, 3D printing, beer and coffee. Check me out ;)</p>
                     </div>
-				</aside>
-				<aside id="text-3" class="widget widget_text">			
-					<div class="textwidget">
-						<a href="/rss.xml" title="RSS 2.0 Feed"><img src="/images/rss-2x.png" alt="Subscribe via RSS" align="middle" height="46" width="46">Subscribe via RSS</a><br>
-					</div>
-				</aside>		
-				<aside id="recent-posts-2" class="widget widget_recent_entries">		
-				<h3 class="widget-title">Recent Posts</h3>		
-				<ul>
-                    @for (int i = 0; i < (Math.Min(Model.Posts.Count, 5)); i++)
-                    {
-                        var post = Model.Posts[i];
-                        <li><a href="@post.Url">@post.Title</a></li>
-                    }
-				</ul>
-				</aside>
-				<!--aside id="recent-comments-2" class="widget widget_recent_comments"><h3 class="widget-title">Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://danrigby.com/2013/02/13/windows-store-developer-links-2013-02-14/" rel="external nofollow" class="url">Windows Store Developer Links – 2013-02-14 | Dan Rigby</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-3">DesignData makes your life easier</a></li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.silverlightshow.net/news/Windows-Phone-DesignData-makes-your-life-easier.aspx" rel="external nofollow" class="url">[Windows Phone] DesignData makes your life easier</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-2">DesignData makes your life easier</a></li></ul>
-				</aside-->
-				<!--aside id="quick-flickr-widget-3" class="widget widget_quick-flickr-widget"><h3 class="widget-title">Flickr</h3>SSL is required</aside-->
-				<!--aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
-									<li><a href="http://localhost/WordPress/blog/2015/07/">July 2015</a></li>
-									<li><a href="http://localhost/WordPress/blog/2013/02/">February 2013</a></li>
-									<li><a href="http://localhost/WordPress/blog/2012/11/">November 2012</a></li>
-										</ul>
-				</aside-->
-				<aside id="categories-2" class="widget widget_categories">
-					<h3 class="widget-title">Categories</h3>		
-					<ul>
-					 @foreach(var category in Model.AllCategories) {
-						<li class="cat-item"><a href="/category/@category.Url" title="@category" rel="tag">@category.Name</a></li>
-					}
-					</ul>
-				</aside>
-				<aside id="tags-2" class="widget widget_tags">
-					<h3 class="widget-title">Tags</h3>		
-					<ul>
-					 @foreach(var tag in Model.AllTags) {
-						<li class="cat-item"><a href="/tag/@tag.Url" title="@tag" rel="tag">@tag.Name</a></li>
-					}
-					</ul>
-				</aside>
-			</div><!-- #secondary .widget-area -->
+                </aside>
+                <aside id="text-3" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="https://stackoverflow.com/users/73027/codemonkeh">
+                            <img src="https://stackoverflow.com/users/flair/73027.png" width="208" height="58" alt="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+                        </a>
+                    </div>
+                </aside>
+                <aside id="text-4" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="/rss.xml" title="RSS 2.0 Feed"><img src="/images/rss-2x.png" alt="Subscribe via RSS" align="middle" height="46" width="46"><span style="padding-left: 5px;">Subscribe via RSS</span></a><br>
+                    </div>
+                </aside>
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h3 class="widget-title">Recent Posts</h3>
+                    <ul>
+                        @for (int i = 0; i < (Math.Min(Model.Posts.Count, 5)); i++)
+                        {
+                            var post = Model.Posts[i];
+                            <li><a href="@post.Url">@post.Title</a></li>
+                        }           
+                    </ul>
+                </aside>
+                <!--aside id="recent-comments-2" class="widget widget_recent_comments"><h3 class="widget-title">Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://danrigby.com/2013/02/13/windows-store-developer-links-2013-02-14/" rel="external nofollow" class="url">Windows Store Developer Links – 2013-02-14 | Dan Rigby</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-3">DesignData makes your life easier</a></li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.silverlightshow.net/news/Windows-Phone-DesignData-makes-your-life-easier.aspx" rel="external nofollow" class="url">[Windows Phone] DesignData makes your life easier</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-2">DesignData makes your life easier</a></li></ul>
+    </aside-->
+                <!--aside id="quick-flickr-widget-3" class="widget widget_quick-flickr-widget"><h3 class="widget-title">Flickr</h3>SSL is required</aside-->
+                <!--aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+                        <li><a href="http://localhost/WordPress/blog/2015/07/">July 2015</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2013/02/">February 2013</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2012/11/">November 2012</a></li>
+                            </ul>
+    </aside-->
+                <aside id="categories-2" class="widget widget_categories">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul>
+                        @foreach (var category in Model.AllCategories)
+            {
+                <li class="cat-item"><a href="/category/@category.Url" title="@category" rel="tag">@category.Name</a></li>
+}
+                    </ul>
+                </aside>
+                <aside id="tags-2" class="widget widget_tags">
+                    <h3 class="widget-title">Tags</h3>
+                    <ul>
+                        @foreach (var tag in Model.AllTags)
+            {
+                <li class="cat-item"><a href="/tag/@tag.Url" title="@tag" rel="tag">@tag.Name</a></li>
+}
+                    </ul>
+                </aside>
+            </div><!-- #secondary .widget-area -->
 
         </div>
         <!-- #main -->
