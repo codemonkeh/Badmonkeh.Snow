@@ -1,0 +1,1200 @@
+
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" lang="en-US">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="en-US">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="en-US">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html lang="en-US"><!--<![endif]-->
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="keywords" content=".net,Active Records,ado.net,asp.net,c#,Castle,control,css,design,DesignData,dev,dialog,error1719,error217,exception,h265,javascript,jQuery,lazy loading,mpeg,nant,ORM,partial trust,popup,postback,RichTextBox,silverlight,software,sql,styling,SyntaxHighlighter,tfs,tfs2013,tfsbuild,TinyMCE,tools,video,wix,wix-3.9,wp7,wp8,xaml" />
+    <title>Don't make me think | Ramblings and rants about coding, technology and other stuff…</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="stylesheet" type="text/css" media="all" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/prettify.css" />
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <meta name="robots" content="noindex,follow">
+    <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
+	<link rel="canonical" href="http://www.badmonkeh.com/" />
+</head>
+<body class="home blog custom-background single-author two-column right-sidebar">
+	<div id="page" class="hfeed">
+		<header id="branding" role="banner">
+			<hgroup>
+				<h1 id="site-title"><span><a href="/" title="Don't make me think" rel="home">Don't make me think</a></span></h1>
+				<h2 id="site-description">Ramblings and rants about coding, technology and other stuff…</h2>
+			</hgroup>
+			
+			<nav id="access" role="navigation">
+				<h3 class="assistive-text">Main menu</h3>
+				<div class="skip-link"><a class="assistive-text" href="#content" title="Skip to primary content">Skip to primary content</a></div>
+				<div class="skip-link"><a class="assistive-text" href="#secondary" title="Skip to secondary content">Skip to secondary content</a></div>
+				<div class="menu">
+                    <ul>
+                        <li class="current_page_item"><a href="/">Home</a></li>                        
+                        <li class="page_item page-item-2"><a href="/category">Categories</a></li>
+						<li class="page_item page-item-3"><a href="/tag">Tags</a></li>
+                        <li class="page_item page-item-4"><a href="/archive">Archive</a></li>
+                        
+                        <li class="page_item page-item-6"><a href="/feed.xml">Feed</a></li>
+                    </ul>
+                </div>
+			</nav><!-- #access -->
+		</header><!-- #branding -->
+        <div id="main">
+            <div id="primary" class="site-content">
+                <div id="content" role="main">
+                  
+  <div class="posts">
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2018/03/14/converting-mpeg-to-h.265/">Converting MPEG to H.265</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>14 Mar 2018
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Converting MPEG to H.265</h1>
+
+<p>I recently took a video of a friend's performance with my DSLR and only afterwards recalled just how massive MPEG files are. The 1080p clip was only 7 minutes long but was a whopping 1.1GB! A good thing that my camera does not support 4K ;).</p>
+
+<p>Being time poor I fanticised briefly about using Windows Movie Maker which i recall as having a degree of utility, albeit with a lot of restrictions. </p>
+
+<p>Unfortunately the Windows 10 replacement only supports 720p at best in the free version whic is pretty dismal considering 4K is pretty standard these days and most codecs and encoding tools are open source anyway.</p>
+
+<p>It was then that i remembered <code>ffmpeg</code>, a really powerful open source audio/video de/encoder that i had used in the past to encode MPEG1 to either DivX or Xvid.</p>
+
+<p>Sure enough <code>ffmpeg</code> is still going strong and has naturally kept pace with the times and allows re-encoding in a number of modern formats.</p>
+
+<h2>Encoding to H.265</h2>
+
+<p>So now to the fun part the encoding. I chose encoding to H.265 as it should be about half the file size of H.264 and is a likely successor.</p>
+
+<h3>Process</h3>
+
+<ol>
+<li>To start download <a href="https://www.ffmpeg.org/download.html">ffmpeg</a> or you can build it from source.</li>
+<li><p>Re-encode it using the following command</p>
+
+<p><code>ffmpeg -i input.mov -c:v libx265 -preset veryslow -crf 18 -c:a aac -strict -2 -b:a 128k output.mp4</code></p></li>
+<li>Profit</li>
+</ol>
+
+<p>The above command re-encodes your mpeg into a h.265 movie using aac for audio at a very high quality (practically lossless). I should note that whilst this will produce a very high fidelity video, it may take a long time e.g. on my 16 thread machine clocked at 4.5Ghz re-encoding a 7min video took over two hours!</p>
+
+<p>However it did manage to reduce the file size from 1.1GB to 202MB without any visual difference. To further reduce the size you could increase the CRF value, e.g. setting this to 28 produced a 54MB file with very minor quality loss.</p>
+
+<h3>ffmpeg command arguments</h3>
+
+<p>So let's break down the arguments provided on the command line above a bit to better understand their impact.</p>
+
+<p><code>-i &lt;filename&gt;</code> - This simply specifies the input filename</p>
+
+<p><code>-c:v libx265</code> - <code>-c</code> is an alias for <code>-codec:v</code> or <code>-vcodec</code> and specifies the encoder to use, in this case lixb265. You could specify libx264 for X.264 encoding.</p>
+
+<p><code>-preset veryslow</code> - This specifies the X.264/265 encoding speed, the slower it encodes the smaller the file size. Set this in the range from <code>veryslow</code>, <code>slower</code>, <code>slow</code>, <code>medium</code> (default), <code>fast</code>, <code>faster</code>, <code>veryfast</code>, <code>superfast</code> and <code>ultrafast</code> depending on your patience ;).</p>
+
+<p>I should note that in the example above, <code>veryslow</code> produced a 202MB file after 135 mins but <code>veryfast</code> produced a 288MB file after only 4 mins.</p>
+
+<p><code>-crf 18</code> - I am encoding using a constant bitrate because i care more about quality than file size, and this factor determines the output bitrate - and hence the quality. This is a scale between 0-51, where 17/18 is practically lossless and the default is 23. Experiment with higher numbers first to see if they give you an acceptable quality as they will also result in a smaller file with less encoding time.</p>
+
+<p><code>-c:a aac</code> - <code>-c</code> is an alias for <code>-codec:a</code> or <code>-acodec</code> and specifies the audio encoder to use. I should note that the AAC encoder is not open source and included with the static build of ffmpeg so you need to either build it from source or use the command <code>-strict -2</code> to use the internal encoder.</p>
+
+<p><code>b:a 128k</code> - This specifies the audio bitrate.</p>
+
+<p>If you want to know all of the options please be sure to read the <a href="https://ffmpeg.org/ffmpeg.html">ffmpeg documentation</a> or specific encoding documentation for <a href="https://trac.ffmpeg.org/wiki/Encode/H.265">x.265</a> or <a href="https://trac.ffmpeg.org/wiki/Encode/AAC">AAC</a>.</p>
+
+<h2>Conclusion</h2>
+
+<p>I hope this is as useful a reference for you as it is for me ;), let me know in the comments if you have any tips or feedback.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Photography
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					h265, mpeg, software, tools, video
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>07 Jul 2015
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<p>We recently commissioned a new build server as part of an upgrade and moved to WiX 3.9R2 as part of the process. After setting up a new build profile my installer build would fail with this same message per each ICE action:</p>
+
+<blockquote>
+  <p>light.exe (0): Error executing ICE action 'ICE01'. The most common cause of this kind of ICE failure is an incorrectly registered scripting engine. See <a href="http://wixtoolset.org/documentation/error217/">http://wixtoolset.org/documentation/error217/</a> for details and how to solve this problem. The following string format was not expected by the external UI message logger: "The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.".</p>
+</blockquote>
+
+<p>Which produces a similar message in the server's event logs:</p>
+
+<blockquote>
+  <p>Product: ProductNameRemoved -- Error 1719. The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.</p>
+</blockquote>
+
+<p>At this point much googling leads to to a similar set of instructions, re-register msiexec, check registry permissions, etc. I tried all of these to no avail, until finally I came across an insightful post from <a href="http://www.wintellect.com/devcenter/jrobbins/wix-projects-vs-tfs-2010-team-build">John Robbins</a> that has the solution:</p>
+
+<blockquote>
+  <p>"In order for the .WiXProj files to compile, the account running the build controller/agent must be in the local machine’s administrator group."</p>
+</blockquote>
+
+<p>Therefore the solution is simply:</p>
+
+<ol>
+<li>Add the service account to the <em>Local Administrators</em> user group</li>
+<li>Restart the server</li>
+<li>...</li>
+<li>Profit!</li>
+</ol>
+
+<p><strong>Note: If you do not already have a service account then I strongly advise you to create one, it is a dangerous security practice to run add a low privileged account like NT SERVICE as an administrator.</strong></p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					dev, error1719, error217, tfs, tfs2013, tfsbuild, wix, wix-3.9
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>12 Feb 2013
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Intro</h1>
+
+<p>Okay so I have finally jumped onto the band wagon and decided to apply my skills to Windows Phone development - after all I've had a Windows Phone since launch and I am a .NET developer. So really it's about time.</p>
+
+<p>I won't go into the basics of how to start coding a Windows Phone application, the Windows Dev Centre really have that covered with a good variety of <a title="Windows Developer Center" href="http://msdn.microsoft.com/en-us/library/windowsphone/develop/ff402551(v=vs.105).aspx">simple articles</a>. What I will say however is that with XAML/Silverlight and a C# back-end, coding for Windows Phone is much like a marriage between ASP.NET and Win Forms, and a good one at that.</p>
+
+<p>And without further adieu...</p>
+
+<h2>On with the show</h2>
+
+<p>Soon enough after jumping into creating your first application, hopefully you are going to discover of the MVVM design pattern and start binding your controls to properties in a ViewModel. Or regardless binding your controls to an object of some kind.</p>
+
+<p>Here's where there is a bit of a <em>Gotcha</em> moment, as you clear the dummy values and bind to the controls and for the most part discover that your interface is rather, well, blank. All of those lists and textboxes are not only empty but is most cases not visible at all.</p>
+
+<p>If you are like me it is at this moment you go looking in the IDE for a suitable property to add testing data to, as seeing your UI in the Designer can sometimes be useful. And then there is the next <em>Gotcha</em>, there isn't one.</p>
+
+<p>Microsoft in their wisdom, most likely to confuse developers, have not made it so easy for us. But have no fear there is a way, or truth be told a few, to add some test data to your design time UI.</p>
+
+<h1>Option #1: FallbackValue</h1>
+
+<p>By far the easiest way to achieve this to specify a FallbackValue in the actual binding on the control. This will set a value to the control if the bound value is not available.</p>
+
+<pre><code>&lt;HyperlinkButton Content="{Binding FooterText, FallbackValue='Foo Bar'}" /&gt;
+</code></pre>
+
+<p>However the drawbacks of this method are that this value will also be shown at runtime if you have no bound value, and it won't do much for any control that expects a collection be bound to it.</p>
+
+<h1>Option #2: Create a DesignData file</h1>
+
+<p>The next best option is to create a specific DesignData file that represents your ViewModel and contains data to be shown only at design time. This file will be written in XAML and allows you to set values for any of the public properties in your ViewModel, including any dependant types.</p>
+
+<p>Now of course you could also use this method for any object you intend to set as the DataContext of a page or control, the method is much the same.</p>
+
+<p>What you need to do in short is:</p>
+
+<ol>
+<li>Create a text file and name it with a .xaml extension.</li>
+<li>Add XAML representing your ViewModel (see below)</li>
+<li>Set the BuildAction to DesignData, and clear the CustomTool property</li>
+<li>In your control/page, ensure that the same namespace is also defined in your control/page's tag</li>
+<li><p>Add a property to your PhoneApplicationPage (or any Control) referencing your new xaml page</p>
+
+<p>d:DataContext="{d:DesignData Source=/DesignData/MyViewModel.xaml}"</p></li>
+<li><p>Then bind the control as you would normally.</p></li>
+</ol>
+
+<h2>Creating the XAML DesignData file</h2>
+
+<pre><code>&lt;local:MyViewModel xmlns:local="clr-namespace:Badmonkeh.ViewModels"&gt;
+   &lt;MyViewModel.Items&gt;
+      &lt;local:MyViewModelItemCollection&gt;
+         &lt;local:MyViewModelItem Name="One two three four" Colour="Blue" PercentComplete="75" ShowProgress="True"/&gt;
+      &lt;/local:MyViewModelItemCollection&gt;
+   &lt;/local:MyViewModel.Items&gt;
+&lt;/local:MyViewModel&gt;
+</code></pre>
+
+<p>In this particular example I am representing a class named <code>MyViewModel</code> which has a <code>MyViewModelCollection</code> in a property named <code>Items</code>. This in turn contains a <code>MyViewModelItem</code> in its default property.</p>
+
+<p>This is pretty standard XAML here, each property of a simple type is a simple key-value pair and each complex type must be described with a new XML element. Where a property for a complex time is not the default content property, a separate element must be created a referenced using the name of the parent class, e.g.</p>
+
+<pre><code>&lt;MyViewModel.Items&gt;
+</code></pre>
+
+<p>The important things to note here:</p>
+
+<ul>
+<li>The declaration of the namespace corresponds to the class's full name</li>
+<li>Generic lists are not supported so you will have to extend your own collection</li>
+<li>Your ViewModel must have a public parameter-less constructor</li>
+<li>Only properties with backing fields can be bound (see below).</li>
+</ul>
+
+<h2>A caveat and a solution</h2>
+
+<p>There is a caveat to this method, inherent in its design. What actually happens when you create a DesignData method is that the designer will create an instance of your class at design time where certain objects may not be available such as your data model, or IsolatedStorage.</p>
+
+<p>The easiest away around this is of course to  simply use properties with backing fields but when that is not convenient you can get around this by checking if you are in design mode by calling <code>DesignerProperties.IsInDesignTool</code> and using a backed field only for design time.</p>
+
+<pre><code>public string Comment
+{
+    get
+    {
+        if (DesignerProperties.IsInDesignTool)
+            return _designerComment;
+
+        if (_blog == null) return null;
+        return _blog.Comment;
+    }
+    set
+    {
+        if (DesignerProperties.IsInDesignTool)
+            _designerComment = value;
+        else
+            _blog.Comment = value;
+    }
+}
+</code></pre>
+
+<p>In the example you can see that I check if we're in the designer (or Blend for that matter) and use a backed field to avoid throwing an exception which would disable the design data, or returning null which would just disable the property.</p>
+
+<p>You might of course wonder why go to the trouble of using a backing field when I can just return a testing value in the property? Well you're right, you can. However this will override any value you specify in the design data XAML file and if this class is shared with other pages, for instance if is used by a User Control, then you won't be able to create separate design data files for different pages.</p>
+
+<h1>Conclusion</h1>
+
+<p>I have shown you a couple of ways to shows some design time data in your pages and help simplify the design process somewhat. The particular beauty of the second approach is that you can design your Control/Page first and really just consider the fields that you will need to bind to. At the time you just need to create a POCO class and only after the design is finalized implement your business logic.</p>
+
+<p>Regardless I hope some of this was useful to you and if not, or if there is anything else I missed, hit me up in the comments below.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					.net, c#, design, DesignData, dev, silverlight, wp7, wp8, xaml
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>11 Sep 2010
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Active Records with Partial Trust, Revisited</h1>
+
+<p>Getting active records to run under medium trust is a problem i have once solved before, and after upgrading to v2.1.2 it has come back again.
+Essentially the problem is two fold:</p>
+
+<ol>
+<li>Ensuring all referenced Castle assemblies has the APTCA attribute applied</li>
+<li>Statically generating proxies with the APTCA attribute applied (is this still necessary?)</li>
+</ol>
+
+<p>To begin i need to identify which assemblies are the problem. So i created a small test project and noted the assemblies that were directly or indirectly used, using Reflector. At the same time i could go through the list and note which ones did not have the attribute applied. This lead to the following list.</p>
+
+<p>Referenced Assemblies Without APTCA:</p>
+
+<ul>
+<li>Castle.Core (1.2.0.0)</li>
+<li>Castle.Components.Validator (1.1.1.0)</li>
+<li>Castle.ActiveRecord (2.1.2)</li>
+</ul>
+
+<p>Now in order to call these assemblies under medium trust i will have to rebuild them, applying the correct attribute, this could be quite a problem but fortunately Active Records is an open source project.
+After a short search i discovered that the source is now stored at Github: http://github.com/castleproject</p>
+
+<p>Then it was a simple case of downloading the source, labeled at the appropriate versions listed above.</p>
+
+<p>This however seemed to be more trouble that it was worth, given that the code was hard to build when it was first split into individual projects (read: required Nant and i couldn't be bothered.)</p>
+
+<p>Building the projects from source was simple enough when you copy in the buildscripts\ folder from the root project 'castle'. You might have manually reference the key to get them strong named but this is a simple matter.</p>
+
+<p>From here all you have to do is apply the attribute as below to the CommonAssemblyInfo file, and voila you are done.</p>
+
+<pre><code>[assembly: System.Security.AllowPartiallyTrustedCallers]
+</code></pre>
+
+<p>If your website is just a personal site and you do not have strongly name assemblies, then this is all you need to do.</p>
+
+<p>Step 2 is the harder part. Assuming your assemblies are strongly signed, ensure first that they also have the APTCA.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					active records, castle, partial trust
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>14 Aug 2010
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Upgrading Castle Active Records</h1>
+
+<p>From 1.0.3.0 (custom build) to 2.1.2</p>
+
+<p>Downloaded binaries from http://sourceforge.net/projects/castleproject/files/ActiveRecord/2.1/AR%202.1.2.zip/download</p>
+
+<p>I downloaded the binaries, and replaced my reference libraries. To my surprised there were no build errors.</p>
+
+<p>Intrigued, i wandered onto the documentation to see what new features/syntax i could use.
+Some notable things i found:</p>
+
+<p>You can now initialise active records by just supplying an assembly, and letting it reflect the types for you.</p>
+
+<pre><code>ActiveRecordsStarter.Initialize(Assembly assembly, IConfigurationSource source)
+</code></pre>
+
+<p>Warning: Try to create an Assembly exclusively for ActiveRecord types if you can. This overload will inspect all public types. If there are thousands of types, this can take a considerable amount of time.</p>
+
+<p>Some validation attribute (Validators):</p>
+
+<pre><code>ValidateIsUnique,ValidateRegExp,ValidateEmail,ValidateNonEmpty,ValidateConfirmation
+</code></pre>
+
+<p>Generics support:</p>
+
+<p>extend generic base class <code>ActiveRecordBase&lt;T&gt;</code> or for inherent validation support extend <code>ActiveRecordValidationBase&lt;T&gt;</code></p>
+
+<p>Note however that if a record is invalid and you try to save it, it will throw an error. Be sure to check it's IsValid method first.</p>
+
+<p>What doesn't work is my proxy class generation.</p>
+
+<p>So i decided to upgrade to using the NHibernate Proxy Generators (http://sourceforge.net/projects/nhcontrib/files/NHibernate.ProxyGenerators/1.0.0%20Alpha%20564/)</p>
+
+<p>Here's a how to: http://nhforge.org/wikis/howtonh/pre-generate-lazy-loading-proxies.aspx</p>
+
+<p>Unfortunately i had the same issue as last time, that it just does not work for NHibernate 2.2</p>
+
+<p>So i decided to have a play around with the source code a little.</p>
+
+<ul>
+<li>Converted the project to VS2010.</li>
+<li>Deleted all in libs except for IlMerge.exe</li>
+<li>Pasted new AR libs in there</li>
+<li>Set all projects target to .NET 3.5</li>
+</ul>
+
+<p><code>CastleStaticProxyFactory</code>
+ - commented out //using NHibernate.Proxy.Poco.Castle;
+ - replaced with NHibernate.ByteCode.Castle
+ - changed CastleLazyInitializer to LazyInitializer</p>
+
+<p><code>CastleProxyFactoryFactory</code> : <code>IProxyFactoryFactory</code>
+ - added stub method for <code>ProxyValidator</code></p>
+
+<p><code>CastleStaticProxyFactoryFactory</code>
+ - added stub method for <code>ProxyValidator</code></p>
+
+<p>Had to add reference to <code>NHibernate.ProxyGenerators.ActiveRecord</code> to the console project</p>
+
+<p>Commented instantiation of <code>SessionFactory</code> - is this the right thing to do?</p>
+
+<p>CastleProxyGenerator
+ - commented out //using global::Castle.DynamicProxy;
+    + we want to use the new ProxyGenerator v2
+ - added using Castle.DynamicProxy;
+ - changed ModuleScope to save weakly named assembly only (to avoid an error) - moduleScope.SaveAssembly(false);
+    + for some reason a strongly named assembly doesn't contain the factory classes?
+ - added compiler reference - references.Add(Assembly.Load("NHibernate.ByteCode.Castle"));, also Castle.ActiveRecord 
+ - altered the compilation to add the input assemblies as references to creating the StaticProxyFactory</p>
+
+<p>Removed Post Build Event:</p>
+
+<pre><code>"$(SolutionDir)libs\NHibernateProxyGenerator\NPG.exe" /in:"$(TargetDir)BadMonkeh.DAO.dll" /out:"$(SolutionDir)BadMonkeh.Website\bin\BadMonkeh.DAO.Proxies.dll"
+copy "$(TargetPath)" "$(SolutionDir)BadMonkeh.Website\bin\$(TargetFileName)"
+</code></pre>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					active records, castle
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2010/02/11/catching-unhandled-exceptions-at-the-lowest-level-for-all-threads/">Catching unhandled exceptions at the lowest level for all threads</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>11 Feb 2010
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Catching unhandled exceptions at the lowest level for all threads</h1>
+
+<p>When designing a responsible application it always pays to think about exception handling. Of course it is good practice to not use "catch-all" exception blocks as this makes it easier to find bugs within the system. However when a user invariably finds one, you ideally don't want your application to just crash. You may wish to show them a pretty dialog, or in the very least log the exception details to help you fix it.</p>
+
+<p>If you only ever use a single thread in your application then you can get away with the below:</p>
+
+<pre><code>try
+{
+    Application.Run(new MyApp());
+}
+catch (Exception ex)
+{
+    //handle error here
+}
+</code></pre>
+
+<p>This happens to work well, however what if you are using separate threads to do processing so that you don't tie up the UI? These events will never be handled by this handled, and hence will crash your app.</p>
+
+<p>The solution however is not that difficult. There are likely a few ways you could go about this but this one seems the easiest to me.</p>
+
+<pre><code>static void Main()
+{
+    // this event handler works for all threads BUT the main thread
+    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    // this event handler ONLY works for the main thread
+    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    // this ensures that the handler will ALWAYS get the event and so can't be reconfigured in the app.config
+    // this may or may not be applicable to you
+    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+    Application.Run(new MyApp());
+}
+
+private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+{
+    HandleUnhandledException(e.ExceptionObject.ToString());
+}
+
+private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+{
+    HandleUnhandledException(e.Exception.ToString());
+}
+
+private static void HandleUnhandledException(string exceptionMessage)
+{
+    //log exception and show dialog here
+
+    Application.Exit();
+}
+</code></pre>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					c#, exception
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2010/02/11/line-highlighting-in-a-richtextbox/">Line highlighting in a RichTextBox</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>11 Feb 2010
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Line highlighting in a RichTextBox</h1>
+
+<p>I often find myself writing little tools to perform specific purposes, as is the wont of a programmer.</p>
+
+<p>However, mostly out of laziness, i tend to avoid writing command line utils and instead prefer little GUI apps. They allow me to add features that i can't have with a CLI, such as persisting settings and allowing file selection dialogs.</p>
+
+<p>Anyways, one of the easiest ways to adapt a console app is to create a windows forms app that features a text box containing the output of whatever you wish to achieve. Now this itself is quite easy to do, however it is just as one dimensional as a console app. Why, you may ask, it is because you are still limited to displaying text in one colour. Should you wish to clearly identify your output you are limited to formatting the position or the characters of the text, which can be quite limiting. For example what if you wanted the errors in a process to be more visible that informational messages?</p>
+
+<p>The solution is to use a RichTextBox. It allows you all of the rich text formatting of a rudimentary RTF editor, such as Wordpad. You could even display HTML in it.</p>
+
+<p>Now, you could change your input to have the appropriate HTML/RTF tags, but this is a quite heavy handed approach and requires you to combine the format with the data. All i really want is to be able to change the colour of text as i insert it, quickly an easily. And here is a method to just do that:</p>
+
+<pre><code>    /// &lt;summary&gt;
+    /// Appends a log message and highlights it with the specified text colour
+    /// &lt;/summary&gt;
+    /// &lt;param name="message"&gt;The message to append&lt;/param&gt;
+    /// &lt;param name="colour"&gt;The colour to display the text in&lt;/param&gt;
+    private void AppendAndHighlightLogMessage(string message, Color colour)
+    {
+        int startIndex = txtLog.Text.Length;
+        txtLog.AppendText(message + Environment.NewLine);
+        txtLog.Select(startIndex, message.Length);
+        txtLog.SelectionColor = colour;            
+    }
+</code></pre>
+
+<p>In this example we have a <code>RichTextBox</code> named <code>txtLog</code>, and we are appending a string to it and highlighting only that with the colour specified.</p>
+
+<p>It is important to note that you call the <code>AppendText(..)</code> method. If you just set the text using <code>txtLog.Text += message;</code> this will not work!</p>
+
+<p>One of the nice things about this approach is even though you are only 'highlighting' the text, the colour will remain.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					RichTextBox
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2009/07/28/creating-databound-custom-controls/">Creating a custom databound control with postbacks</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>28 Jul 2009
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Creating a custom databound control with postbacks</h1>
+
+<pre><code>/// &lt;summary&gt;
+/// Creating a custom databound control with postbacks
+/// --------------------------------------------------
+/// This class provides you the basis for a databound custom control
+/// and shows you where to place logic to ensure the data is saved in
+/// the ViewState and the dynamically created child controls work
+/// as intended
+/// &lt;/summary&gt;
+class MyControl : Control
+{
+    private object datasource;
+    //CF: A list we are using for example
+    private RadioButtonList _List;
+
+    //CF: Define this as whatever you want if this control is databound
+    //    This object should not be persisted as you are relying on ViewState
+    public object DataSource
+    { 
+        get { return datasource; }
+        set { datasource = value; }
+    }
+
+    //CF: This variable holds the number of items that were databound
+    //    It is used on post back to recreate the items that are stored in the ViewState
+    private int NumberOfItems
+    {
+        get
+        {
+            if (ViewState["NumberOfItems"] == null)
+                return 0;
+            return (int) ViewState["NumberOfItems"];
+        }
+        set { ViewState["NumberOfItems"] = value; }
+    }   
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        //CF: The controls must be created here otherwise the postback data will not be loaded!!!
+        EnsureChildControls();
+
+        //CF: If your control requires ControlState uncomment this line
+        //Page.RegisterRequiresControlState(this);
+    }
+
+    protected override void CreateChildControls()
+    {
+        //CF: Only create the list and it's items here it will be populated on databinding, or via viewstate
+        _List = new RadioButtonList();
+        for (int i = 0; i &lt; NumberOfItems; i++)
+        {
+            ListItem item = new ListItem();
+            _List.Items.Add(item);
+        }
+        Controls.Add(_List);
+
+        //CF: Setting additional properties of the controls should be done *after* 
+        //    they are added to Controls collection. This will "dirty" the ViewState
+        //    and ensure their value is persisted
+        //    Ensure you give your dynamic controls an ID, to associate them to their 
+        //    ViewState data
+        _List.ID = "list";
+    }
+
+    protected override void OnDataBinding(EventArgs e)
+    {
+        //CF: You need to set the number of items here
+        NumberOfItems = DataSource.Count;
+
+        //CF: As the list was already created in OnInit() with no items, it must be recreated here
+        Controls.Clear();
+        CreateChildControls();
+
+        //CF: Now we loop through each item and databind it's actual value
+        for (int i = 0; i &lt; NumberOfItems; i++)
+        {
+            ListItem item = _List.Items[i];
+            //TODO: Obtain the value from the DataSource and set the Controls properties
+        }
+    }
+
+    //CF: If necessary override Render() to specify custom control rendering, otherwise leave it as it is
+    //protected override void Render(HtmlTextWriter writer)
+    //{
+    //  //TODO: Do stuff
+    //}
+
+    //CF: If you are using control state uncomment the following 2 paragraphs and customise them 
+    //    as necessary. If you need to save multiple objects it is probably best to wrap them up
+    //    in a struct/class.
+    //    Remember all objects must be Serializable.
+    /*
+    protected override void LoadControlState(object savedState)
+    {
+        object[] state = (object[]) savedState;
+        base.LoadControlState(state[0]);
+        MyObject = state[1];
+    }
+
+    protected override object SaveControlState()
+    {
+        object[] state = new object[2];
+        state[0] = base.SaveControlState();
+        state[1] = MyObject;
+        return state;
+    }   
+    */
+}
+</code></pre>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					asp.net, control, postback
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/">Creating controls that contain other controls (at design time)</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>04 Feb 2009
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Creating controls that contain other controls (at design time)</h1>
+
+<p>I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
+There are 2 parts of this.</p>
+
+<ol>
+<li>Adding controls to a collection at design time.
+An example of this would be a <code>DataGrid</code>'s Columns property. e.g.</li>
+</ol>
+
+<p><code>
+    &lt;asp:DataGrid&gt;
+        &lt;Columns&gt;
+            &lt;asp:Column /&gt;
+            &lt;asp:Column /&gt;
+        &lt;/Columns&gt;
+    &lt;/asp:DataGrid&gt;
+</code></p>
+
+<p>These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:</p>
+
+<pre><code>[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
+public virtual DataGridColumnCollection Columns
+{ get; }
+</code></pre>
+
+<p>Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
+The key attribute here is <code>PersistenceMode</code>. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:</p>
+
+<pre><code>public enum PersistenceMode
+{
+    Attribute,
+    InnerProperty,
+    InnerDefaultProperty,
+    EncodedInnerDefaultProperty
+}
+</code></pre>
+
+<p>Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.</p>
+
+<p>The one we are interested in is <code>InnerProperty</code>. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
+If you add <code>[PersistenceMode(PersistenceMode.InnerProperty)]</code> to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.</p>
+
+<p>Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.</p>
+
+<p>Note: In order for this to work properly your control must extend from <code>UserControl</code>and not Control :)</p>
+
+<ol>
+<li>Creating a dynamic templated control to contain other controls</li>
+</ol>
+
+<p>Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.</p>
+
+<p>If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:</p>
+
+<p>```
+    public class TestTab : UserControl
+    {
+        private PlaceHolder _ContentPlaceHolder;
+        private ITemplate _ContentTemplate;</p>
+
+<pre><code>    [PersistenceMode(PersistenceMode.InnerProperty)]
+    [TemplateInstance(TemplateInstance.Single)]
+    public ITemplate ContentTemplate
+    {
+        get { return _ContentTemplate; }
+        set { _ContentTemplate = value; }
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (_ContentPlaceHolder == null)
+        {
+            _ContentPlaceHolder = new PlaceHolder();
+            this.Controls.Add(_ContentPlaceHolder);
+        }
+
+        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
+    }
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Okay, first you need to create a class that extends from <code>UserControl</code>. You can instead extend from Control if you like, but you have to implement the interface <code>INamingContainer</code>. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.</p>
+
+<p>Next add a <code>PlaceHolder</code> to hold the template for obvious reasons. Then create an <code>ITemplate</code> property. The important thing to note here is that you set the <code>PersistenceMode</code> (as defined above) so you can easily set it's contents declaratively.</p>
+
+<p>Also the <code>TemplateInstance.Single</code> attribute value as it allows you to reference the templated controls directly within the page.</p>
+
+<p>Finally the real meat of it. In the <code>OnInit</code> event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.</p>
+
+<p>The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.</p>
+
+<p>I have not tested the ViewState of this, but it should all work.</p>
+
+<p>Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx</p>
+
+<p>Note2: Ensure the controls are create in Init to access them in Page<em>Load (otherwise they'll be created in Page</em>PreRender)</p>
+
+<p>REF: http://www.csharper.net/blog/container<em>user</em>controls<em>_</em>user<em>controls</em>that<em>can</em>contain<em>other</em>controls.aspx - Comment by Ego</p>
+
+<p>also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					asp.net, control
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-asp.net/">Adding a reusable pop-up box using jQuery and ASP.NET</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>31 Dec 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Adding a reusable pop-up box using jQuery and ASP.NET</h1>
+
+<p>Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.</p>
+
+<p>Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.</p>
+
+<p>Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.</p>
+
+<p>In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:</p>
+
+<pre><code>public static void RegisterJQueryRemote(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
+}
+
+public static void RegisterPopup(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
+}
+</code></pre>
+
+<p>These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.</p>
+
+<p>Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. </p>
+
+<p>This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.</p>
+
+<p>Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:</p>
+
+<ol>
+<li><p>include jQuery and the popup.js
+Personally i call the above methods in the <code>Page_Load</code> event</p></li>
+<li><p>create a div with a class "popup", and into this place the code for your popup, e.g.</p></li>
+</ol>
+
+<p>```</p>
+
+  <div id="popup" class="help_titles">
+    <div>
+        <a id="popupClose">x</a>
+        <strong>Rejection Reason</strong>
+    </div>                       
+    <p>
+        <asp:TextBox ID="txtRejectionReason" runat="server" />
+        <asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" />
+    </p>
+  </div>
+
+<p>```  </p>
+
+<ol>
+<li><p>create a div with class "backgroundPopup"
+This just needs to be empty, and will be used to dim the background</p></li>
+<li><p>Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.</p></li>
+</ol>
+
+<p><code>
+      &lt;div id="popupButton"&gt;&lt;a&gt;Reject&lt;/a&gt;&lt;/div&gt;<br />
+      &lt;span id="popupButton"&gt;&lt;input type="button" value="Reject"/&gt;&lt;/span&gt;
+</code></p>
+
+<ol>
+<li>And finally add the required styles.      </li>
+</ol>
+
+<p>```
+    #backgroundPopup { 
+        display: none;<br />
+        _position: absolute; /* hack for internet explorer 6<em>/
+        position: fixed;
+        height: 100%;<br />
+        width: 100%;<br />
+        top: 0;<br />
+        left: 0;<br />
+        background: #000000;<br />
+        border: 1px solid #cecece;<br />
+        z-index: 1; 
+    }<br />
+    #popup {<br />
+        width: 300px; 
+        margin-top: 5px; 
+        padding-bottom: 5px; 
+        display: none;
+        _position: absolute; /</em> hack for internet explorer 6*/
+        position: fixed;
+        z-index: 2; 
+        height: 100px;
+    }
+    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
+    #popup p { margin: 5px; }
+    #popupClose { padding-right: 5px; float: right; font-weight: bold; }<br />
+    #popupClose:hover { cursor: pointer; }
+    #popupButton { width: 100%; margin-top: 5px; }        </p>
+
+<pre><code>.help_titles
+{
+    border: solid 1px #B5B6B5;
+    background-color: #F7F7F7;
+    font-family: Verdana, Arial;
+    font-size: 11px;
+    color: #1C1F7B;
+}
+</code></pre>
+
+<p>```    </p>
+
+<p>Obviously you do not need all of this, you can remove the formatting. But this should get you started.</p>
+
+<p>And that's about it really.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					asp.net, dialog, javascript, jQuery, popup
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+  </div> 
+
+  <!-- Pagination links -->
+  <div id="post-pagination" class="pagination">
+
+   
+
+      <!--<a href="/">Previous Page</a>-->
+
+    <p class="previous">
+      <a href="/page2">Next Page</a>
+    </p>
+
+  </div>
+
+
+                </div>
+                <!-- #content -->
+            </div>
+            <!-- #primary .site-content -->
+			
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="text-2" class="widget widget_text">
+                    <h3 class="widget-title">About me</h3>
+                    <div class="textwidget">
+                        <a href="/about"><img src="/images/profile/me.jpg" border="0"></a>
+                        <p>Hi, i'm Christian Froehlich.</p>
+                        <p>
+                            I'm a passionate .NET Software Developer with over 10 years of experience in building web application and solving complex problems.
+                        </p>
+                        <p>I'm also interested in photography, 3D printing, beer and coffee. Check me out ;)</p>
+                    </div>
+                </aside>
+                <aside id="text-3" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="https://stackoverflow.com/users/73027/codemonkeh">
+                            <img src="https://stackoverflow.com/users/flair/73027.png" width="208" height="58" alt="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+                        </a>
+                    </div>
+                </aside>
+                <aside id="text-4" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="/rss.xml" title="RSS 2.0 Feed"><img src="/images/rss-2x.png" alt="Subscribe via RSS" align="middle" height="46" width="46"><span style="padding-left: 5px;">Subscribe via RSS</span></a><br>
+                    </div>
+                </aside>
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h3 class="widget-title">Recent Posts</h3>
+                    <ul>
+                            <li><a href="/2018/03/14/converting-mpeg-to-h.265/">Converting MPEG to H.265</a></li>
+                            <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
+                            <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
+                            <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
+                            <li><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></li>
+                    </ul>
+                </aside>
+                <!--aside id="recent-comments-2" class="widget widget_recent_comments"><h3 class="widget-title">Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://danrigby.com/2013/02/13/windows-store-developer-links-2013-02-14/" rel="external nofollow" class="url">Windows Store Developer Links – 2013-02-14 | Dan Rigby</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-3">DesignData makes your life easier</a></li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.silverlightshow.net/news/Windows-Phone-DesignData-makes-your-life-easier.aspx" rel="external nofollow" class="url">[Windows Phone] DesignData makes your life easier</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-2">DesignData makes your life easier</a></li></ul>
+    </aside-->
+                <!--aside id="quick-flickr-widget-3" class="widget widget_quick-flickr-widget"><h3 class="widget-title">Flickr</h3>SSL is required</aside-->
+                <!--aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+                        <li><a href="http://localhost/WordPress/blog/2015/07/">July 2015</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2013/02/">February 2013</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2012/11/">November 2012</a></li>
+                            </ul>
+    </aside-->
+                <aside id="categories-2" class="widget widget_categories">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul>
+                <li class="cat-item"><a href="/category/photography" title="Snow.Models.Category" rel="tag">Photography</a></li>
+                <li class="cat-item"><a href="/category/software-development" title="Snow.Models.Category" rel="tag">Software Development</a></li>
+                    </ul>
+                </aside>
+                <aside id="tags-2" class="widget widget_tags">
+                    <h3 class="widget-title">Tags</h3>
+                    <ul>
+                <li class="cat-item"><a href="/tag/.net" title="Snow.Models.Tag" rel="tag">.net</a></li>
+                <li class="cat-item"><a href="/tag/active-records" title="Snow.Models.Tag" rel="tag">Active Records</a></li>
+                <li class="cat-item"><a href="/tag/ado.net" title="Snow.Models.Tag" rel="tag">ado.net</a></li>
+                <li class="cat-item"><a href="/tag/asp.net" title="Snow.Models.Tag" rel="tag">asp.net</a></li>
+                <li class="cat-item"><a href="/tag/c" title="Snow.Models.Tag" rel="tag">c#</a></li>
+                <li class="cat-item"><a href="/tag/castle" title="Snow.Models.Tag" rel="tag">Castle</a></li>
+                <li class="cat-item"><a href="/tag/control" title="Snow.Models.Tag" rel="tag">control</a></li>
+                <li class="cat-item"><a href="/tag/css" title="Snow.Models.Tag" rel="tag">css</a></li>
+                <li class="cat-item"><a href="/tag/design" title="Snow.Models.Tag" rel="tag">design</a></li>
+                <li class="cat-item"><a href="/tag/designdata" title="Snow.Models.Tag" rel="tag">DesignData</a></li>
+                <li class="cat-item"><a href="/tag/dev" title="Snow.Models.Tag" rel="tag">dev</a></li>
+                <li class="cat-item"><a href="/tag/dialog" title="Snow.Models.Tag" rel="tag">dialog</a></li>
+                <li class="cat-item"><a href="/tag/error1719" title="Snow.Models.Tag" rel="tag">error1719</a></li>
+                <li class="cat-item"><a href="/tag/error217" title="Snow.Models.Tag" rel="tag">error217</a></li>
+                <li class="cat-item"><a href="/tag/exception" title="Snow.Models.Tag" rel="tag">exception</a></li>
+                <li class="cat-item"><a href="/tag/h265" title="Snow.Models.Tag" rel="tag">h265</a></li>
+                <li class="cat-item"><a href="/tag/javascript" title="Snow.Models.Tag" rel="tag">javascript</a></li>
+                <li class="cat-item"><a href="/tag/jquery" title="Snow.Models.Tag" rel="tag">jQuery</a></li>
+                <li class="cat-item"><a href="/tag/lazy-loading" title="Snow.Models.Tag" rel="tag">lazy loading</a></li>
+                <li class="cat-item"><a href="/tag/mpeg" title="Snow.Models.Tag" rel="tag">mpeg</a></li>
+                <li class="cat-item"><a href="/tag/nant" title="Snow.Models.Tag" rel="tag">nant</a></li>
+                <li class="cat-item"><a href="/tag/orm" title="Snow.Models.Tag" rel="tag">ORM</a></li>
+                <li class="cat-item"><a href="/tag/partial-trust" title="Snow.Models.Tag" rel="tag">partial trust</a></li>
+                <li class="cat-item"><a href="/tag/popup" title="Snow.Models.Tag" rel="tag">popup</a></li>
+                <li class="cat-item"><a href="/tag/postback" title="Snow.Models.Tag" rel="tag">postback</a></li>
+                <li class="cat-item"><a href="/tag/richtextbox" title="Snow.Models.Tag" rel="tag">RichTextBox</a></li>
+                <li class="cat-item"><a href="/tag/silverlight" title="Snow.Models.Tag" rel="tag">silverlight</a></li>
+                <li class="cat-item"><a href="/tag/software" title="Snow.Models.Tag" rel="tag">software</a></li>
+                <li class="cat-item"><a href="/tag/sql" title="Snow.Models.Tag" rel="tag">sql</a></li>
+                <li class="cat-item"><a href="/tag/styling" title="Snow.Models.Tag" rel="tag">styling</a></li>
+                <li class="cat-item"><a href="/tag/syntaxhighlighter" title="Snow.Models.Tag" rel="tag">SyntaxHighlighter</a></li>
+                <li class="cat-item"><a href="/tag/tfs" title="Snow.Models.Tag" rel="tag">tfs</a></li>
+                <li class="cat-item"><a href="/tag/tfs2013" title="Snow.Models.Tag" rel="tag">tfs2013</a></li>
+                <li class="cat-item"><a href="/tag/tfsbuild" title="Snow.Models.Tag" rel="tag">tfsbuild</a></li>
+                <li class="cat-item"><a href="/tag/tinymce" title="Snow.Models.Tag" rel="tag">TinyMCE</a></li>
+                <li class="cat-item"><a href="/tag/tools" title="Snow.Models.Tag" rel="tag">tools</a></li>
+                <li class="cat-item"><a href="/tag/video" title="Snow.Models.Tag" rel="tag">video</a></li>
+                <li class="cat-item"><a href="/tag/wix" title="Snow.Models.Tag" rel="tag">wix</a></li>
+                <li class="cat-item"><a href="/tag/wix-3.9" title="Snow.Models.Tag" rel="tag">wix-3.9</a></li>
+                <li class="cat-item"><a href="/tag/wp7" title="Snow.Models.Tag" rel="tag">wp7</a></li>
+                <li class="cat-item"><a href="/tag/wp8" title="Snow.Models.Tag" rel="tag">wp8</a></li>
+                <li class="cat-item"><a href="/tag/xaml" title="Snow.Models.Tag" rel="tag">xaml</a></li>
+                    </ul>
+                </aside>
+            </div><!-- #secondary .widget-area -->
+
+        </div>
+        <!-- #main -->
+
+		<footer id="colophon" role="contentinfo">
+			<div>
+			Powered by <a href="https://github.com/codemonkeh/Sandra.Snow" rel="generator">Sandra.Snow</a>. Copyright © 2018 Christian Froehlich. All rights reserved. 
+			</div>
+		</footer><!-- #colophon -->		
+    </div>
+	
+    <!-- #page .hfeed .site -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src='/js/prettify.js' type='text/javascript'></script>
+    
+    <script type="text/javascript">
+var _gaq = _gaq || [];
+
+_gaq.push(['_setAccount', 'UA-68156920-1']);
+_gaq.push(['_trackPageview']);
+        
+(function () {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    
+    <script type='text/javascript'>
+      $(function () {
+        $("pre code").parent().each(function () {
+          if (!$(this).hasClass("prettyprint")) {
+            $(this).addClass("prettyprint");
+            a = true
+          }
+        });
+
+        prettyPrint();
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" lang="en-US">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="en-US">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="en-US">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html lang="en-US"><!--<![endif]-->
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="keywords" content=".net,Active Records,ado.net,asp.net,c#,Castle,control,css,design,DesignData,dev,dialog,error1719,error217,exception,h265,javascript,jQuery,lazy loading,mpeg,nant,ORM,partial trust,popup,postback,RichTextBox,silverlight,software,sql,styling,SyntaxHighlighter,tfs,tfs2013,tfsbuild,TinyMCE,tools,video,wix,wix-3.9,wp7,wp8,xaml" />
+    <title>Don't make me think | Ramblings and rants about coding, technology and other stuff…</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="stylesheet" type="text/css" media="all" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/prettify.css" />
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <meta name="robots" content="noindex,follow">
+    <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
+	<link rel="canonical" href="http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/" />
+</head>
+<body class="home blog custom-background single-author two-column right-sidebar">
+	<div id="page" class="hfeed">
+		<header id="branding" role="banner">
+			<hgroup>
+				<h1 id="site-title"><span><a href="/" title="Don't make me think" rel="home">Don't make me think</a></span></h1>
+				<h2 id="site-description">Ramblings and rants about coding, technology and other stuff…</h2>
+			</hgroup>
+			
+			<nav id="access" role="navigation">
+				<h3 class="assistive-text">Main menu</h3>
+				<div class="skip-link"><a class="assistive-text" href="#content" title="Skip to primary content">Skip to primary content</a></div>
+				<div class="skip-link"><a class="assistive-text" href="#secondary" title="Skip to secondary content">Skip to secondary content</a></div>
+				<div class="menu">
+                    <ul>
+                        <li class="current_page_item"><a href="/">Home</a></li>                        
+                        <li class="page_item page-item-2"><a href="/category">Categories</a></li>
+						<li class="page_item page-item-3"><a href="/tag">Tags</a></li>
+                        <li class="page_item page-item-4"><a href="/archive">Archive</a></li>
+                        
+                        <li class="page_item page-item-6"><a href="/feed.xml">Feed</a></li>
+                    </ul>
+                </div>
+			</nav><!-- #access -->
+		</header><!-- #branding -->
+        <div id="main">
+            <div id="primary" class="site-content">
+                <div id="content" role="main">
+                  
+
+<article class="post type-post status-publish format-standard hentry">
+    <header class="entry-header">
+        <h1 class="entry-title">Creating controls that contain other controls (at design time)</h1>
+
+        <div class="entry-meta">
+            <span class="sep">Posted on </span>04 Feb 2009
+        </div><!-- .entry-meta -->
+    </header><!-- .entry-header -->
+
+    <div class="entry-content">
+        
+
+        <h1>Creating controls that contain other controls (at design time)</h1>
+
+<p>I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
+There are 2 parts of this.</p>
+
+<ol>
+<li>Adding controls to a collection at design time.
+An example of this would be a <code>DataGrid</code>'s Columns property. e.g.</li>
+</ol>
+
+<p><code>
+    &lt;asp:DataGrid&gt;
+        &lt;Columns&gt;
+            &lt;asp:Column /&gt;
+            &lt;asp:Column /&gt;
+        &lt;/Columns&gt;
+    &lt;/asp:DataGrid&gt;
+</code></p>
+
+<p>These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:</p>
+
+<pre><code>[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
+public virtual DataGridColumnCollection Columns
+{ get; }
+</code></pre>
+
+<p>Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
+The key attribute here is <code>PersistenceMode</code>. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:</p>
+
+<pre><code>public enum PersistenceMode
+{
+    Attribute,
+    InnerProperty,
+    InnerDefaultProperty,
+    EncodedInnerDefaultProperty
+}
+</code></pre>
+
+<p>Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.</p>
+
+<p>The one we are interested in is <code>InnerProperty</code>. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
+If you add <code>[PersistenceMode(PersistenceMode.InnerProperty)]</code> to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.</p>
+
+<p>Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.</p>
+
+<p>Note: In order for this to work properly your control must extend from <code>UserControl</code>and not Control :)</p>
+
+<ol>
+<li>Creating a dynamic templated control to contain other controls</li>
+</ol>
+
+<p>Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.</p>
+
+<p>If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:</p>
+
+<p>```
+    public class TestTab : UserControl
+    {
+        private PlaceHolder _ContentPlaceHolder;
+        private ITemplate _ContentTemplate;</p>
+
+<pre><code>    [PersistenceMode(PersistenceMode.InnerProperty)]
+    [TemplateInstance(TemplateInstance.Single)]
+    public ITemplate ContentTemplate
+    {
+        get { return _ContentTemplate; }
+        set { _ContentTemplate = value; }
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (_ContentPlaceHolder == null)
+        {
+            _ContentPlaceHolder = new PlaceHolder();
+            this.Controls.Add(_ContentPlaceHolder);
+        }
+
+        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
+    }
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Okay, first you need to create a class that extends from <code>UserControl</code>. You can instead extend from Control if you like, but you have to implement the interface <code>INamingContainer</code>. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.</p>
+
+<p>Next add a <code>PlaceHolder</code> to hold the template for obvious reasons. Then create an <code>ITemplate</code> property. The important thing to note here is that you set the <code>PersistenceMode</code> (as defined above) so you can easily set it's contents declaratively.</p>
+
+<p>Also the <code>TemplateInstance.Single</code> attribute value as it allows you to reference the templated controls directly within the page.</p>
+
+<p>Finally the real meat of it. In the <code>OnInit</code> event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.</p>
+
+<p>The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.</p>
+
+<p>I have not tested the ViewState of this, but it should all work.</p>
+
+<p>Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx</p>
+
+<p>Note2: Ensure the controls are create in Init to access them in Page<em>Load (otherwise they'll be created in Page</em>PreRender)</p>
+
+<p>REF: http://www.csharper.net/blog/container<em>user</em>controls<em>_</em>user<em>controls</em>that<em>can</em>contain<em>other</em>controls.aspx - Comment by Ego</p>
+
+<p>also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx</p>
+
+    </div><!-- .entry-content -->   
+    
+    <footer class="entry-meta">
+        <span class="cat-links">
+		<span class="entry-utility-prep entry-utility-prep-cat-links">Posted in</span>
+				<a href="/category/software-development" title="Snow.Models.Category" rel="category tag">Software Development</a>,
+        </span>
+        <span class="sep"> | </span>
+        <span class="tag-links">
+            <span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					<a href="/tag/asp.net" title="Snow.Models.Tag" rel="tag">asp.net</a>,
+					<a href="/tag/control" title="Snow.Models.Tag" rel="tag">control</a>,
+        </span>
+
+        
+
+		<div id="disqus_thread"></div>
+<script>
+    var reset_disqus = function(){
+        DISQUS.reset({
+            reload: true,
+            config: function () {
+                //this.page.identifier = '';
+                this.page.url = 'http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/';
+                //this.page.title = '';
+            }
+        });
+    };
+
+    var disqus_shortname = 'badmonkehblog';
+    var disqus_url = 'http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    window.addEventListener('orientationchange', reset_disqus);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer><!-- .entry-meta -->
+	
+</article>
+
+                </div>
+                <!-- #content -->
+            </div>
+            <!-- #primary .site-content -->
+			
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="text-2" class="widget widget_text">
+                    <h3 class="widget-title">About me</h3>
+                    <div class="textwidget">
+                        <a href="/about"><img src="/images/profile/me.jpg" border="0"></a>
+                        <p>Hi, i'm Christian Froehlich.</p>
+                        <p>
+                            I'm a passionate .NET Software Developer with over 10 years of experience in building web application and solving complex problems.
+                        </p>
+                        <p>I'm also interested in photography, 3D printing, beer and coffee. Check me out ;)</p>
+                    </div>
+                </aside>
+                <aside id="text-3" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="https://stackoverflow.com/users/73027/codemonkeh">
+                            <img src="https://stackoverflow.com/users/flair/73027.png" width="208" height="58" alt="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+                        </a>
+                    </div>
+                </aside>
+                <aside id="text-4" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="/rss.xml" title="RSS 2.0 Feed"><img src="/images/rss-2x.png" alt="Subscribe via RSS" align="middle" height="46" width="46"><span style="padding-left: 5px;">Subscribe via RSS</span></a><br>
+                    </div>
+                </aside>
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h3 class="widget-title">Recent Posts</h3>
+                    <ul>
+                            <li><a href="/2018/03/14/converting-mpeg-to-h.265/">Converting MPEG to H.265</a></li>
+                            <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
+                            <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
+                            <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
+                            <li><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></li>
+                    </ul>
+                </aside>
+                <!--aside id="recent-comments-2" class="widget widget_recent_comments"><h3 class="widget-title">Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://danrigby.com/2013/02/13/windows-store-developer-links-2013-02-14/" rel="external nofollow" class="url">Windows Store Developer Links – 2013-02-14 | Dan Rigby</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-3">DesignData makes your life easier</a></li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.silverlightshow.net/news/Windows-Phone-DesignData-makes-your-life-easier.aspx" rel="external nofollow" class="url">[Windows Phone] DesignData makes your life easier</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-2">DesignData makes your life easier</a></li></ul>
+    </aside-->
+                <!--aside id="quick-flickr-widget-3" class="widget widget_quick-flickr-widget"><h3 class="widget-title">Flickr</h3>SSL is required</aside-->
+                <!--aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+                        <li><a href="http://localhost/WordPress/blog/2015/07/">July 2015</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2013/02/">February 2013</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2012/11/">November 2012</a></li>
+                            </ul>
+    </aside-->
+                <aside id="categories-2" class="widget widget_categories">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul>
+                <li class="cat-item"><a href="/category/photography" title="Snow.Models.Category" rel="tag">Photography</a></li>
+                <li class="cat-item"><a href="/category/software-development" title="Snow.Models.Category" rel="tag">Software Development</a></li>
+                    </ul>
+                </aside>
+                <aside id="tags-2" class="widget widget_tags">
+                    <h3 class="widget-title">Tags</h3>
+                    <ul>
+                <li class="cat-item"><a href="/tag/.net" title="Snow.Models.Tag" rel="tag">.net</a></li>
+                <li class="cat-item"><a href="/tag/active-records" title="Snow.Models.Tag" rel="tag">Active Records</a></li>
+                <li class="cat-item"><a href="/tag/ado.net" title="Snow.Models.Tag" rel="tag">ado.net</a></li>
+                <li class="cat-item"><a href="/tag/asp.net" title="Snow.Models.Tag" rel="tag">asp.net</a></li>
+                <li class="cat-item"><a href="/tag/c" title="Snow.Models.Tag" rel="tag">c#</a></li>
+                <li class="cat-item"><a href="/tag/castle" title="Snow.Models.Tag" rel="tag">Castle</a></li>
+                <li class="cat-item"><a href="/tag/control" title="Snow.Models.Tag" rel="tag">control</a></li>
+                <li class="cat-item"><a href="/tag/css" title="Snow.Models.Tag" rel="tag">css</a></li>
+                <li class="cat-item"><a href="/tag/design" title="Snow.Models.Tag" rel="tag">design</a></li>
+                <li class="cat-item"><a href="/tag/designdata" title="Snow.Models.Tag" rel="tag">DesignData</a></li>
+                <li class="cat-item"><a href="/tag/dev" title="Snow.Models.Tag" rel="tag">dev</a></li>
+                <li class="cat-item"><a href="/tag/dialog" title="Snow.Models.Tag" rel="tag">dialog</a></li>
+                <li class="cat-item"><a href="/tag/error1719" title="Snow.Models.Tag" rel="tag">error1719</a></li>
+                <li class="cat-item"><a href="/tag/error217" title="Snow.Models.Tag" rel="tag">error217</a></li>
+                <li class="cat-item"><a href="/tag/exception" title="Snow.Models.Tag" rel="tag">exception</a></li>
+                <li class="cat-item"><a href="/tag/h265" title="Snow.Models.Tag" rel="tag">h265</a></li>
+                <li class="cat-item"><a href="/tag/javascript" title="Snow.Models.Tag" rel="tag">javascript</a></li>
+                <li class="cat-item"><a href="/tag/jquery" title="Snow.Models.Tag" rel="tag">jQuery</a></li>
+                <li class="cat-item"><a href="/tag/lazy-loading" title="Snow.Models.Tag" rel="tag">lazy loading</a></li>
+                <li class="cat-item"><a href="/tag/mpeg" title="Snow.Models.Tag" rel="tag">mpeg</a></li>
+                <li class="cat-item"><a href="/tag/nant" title="Snow.Models.Tag" rel="tag">nant</a></li>
+                <li class="cat-item"><a href="/tag/orm" title="Snow.Models.Tag" rel="tag">ORM</a></li>
+                <li class="cat-item"><a href="/tag/partial-trust" title="Snow.Models.Tag" rel="tag">partial trust</a></li>
+                <li class="cat-item"><a href="/tag/popup" title="Snow.Models.Tag" rel="tag">popup</a></li>
+                <li class="cat-item"><a href="/tag/postback" title="Snow.Models.Tag" rel="tag">postback</a></li>
+                <li class="cat-item"><a href="/tag/richtextbox" title="Snow.Models.Tag" rel="tag">RichTextBox</a></li>
+                <li class="cat-item"><a href="/tag/silverlight" title="Snow.Models.Tag" rel="tag">silverlight</a></li>
+                <li class="cat-item"><a href="/tag/software" title="Snow.Models.Tag" rel="tag">software</a></li>
+                <li class="cat-item"><a href="/tag/sql" title="Snow.Models.Tag" rel="tag">sql</a></li>
+                <li class="cat-item"><a href="/tag/styling" title="Snow.Models.Tag" rel="tag">styling</a></li>
+                <li class="cat-item"><a href="/tag/syntaxhighlighter" title="Snow.Models.Tag" rel="tag">SyntaxHighlighter</a></li>
+                <li class="cat-item"><a href="/tag/tfs" title="Snow.Models.Tag" rel="tag">tfs</a></li>
+                <li class="cat-item"><a href="/tag/tfs2013" title="Snow.Models.Tag" rel="tag">tfs2013</a></li>
+                <li class="cat-item"><a href="/tag/tfsbuild" title="Snow.Models.Tag" rel="tag">tfsbuild</a></li>
+                <li class="cat-item"><a href="/tag/tinymce" title="Snow.Models.Tag" rel="tag">TinyMCE</a></li>
+                <li class="cat-item"><a href="/tag/tools" title="Snow.Models.Tag" rel="tag">tools</a></li>
+                <li class="cat-item"><a href="/tag/video" title="Snow.Models.Tag" rel="tag">video</a></li>
+                <li class="cat-item"><a href="/tag/wix" title="Snow.Models.Tag" rel="tag">wix</a></li>
+                <li class="cat-item"><a href="/tag/wix-3.9" title="Snow.Models.Tag" rel="tag">wix-3.9</a></li>
+                <li class="cat-item"><a href="/tag/wp7" title="Snow.Models.Tag" rel="tag">wp7</a></li>
+                <li class="cat-item"><a href="/tag/wp8" title="Snow.Models.Tag" rel="tag">wp8</a></li>
+                <li class="cat-item"><a href="/tag/xaml" title="Snow.Models.Tag" rel="tag">xaml</a></li>
+                    </ul>
+                </aside>
+            </div><!-- #secondary .widget-area -->
+
+        </div>
+        <!-- #main -->
+
+		<footer id="colophon" role="contentinfo">
+			<div>
+			Powered by <a href="https://github.com/codemonkeh/Sandra.Snow" rel="generator">Sandra.Snow</a>. Copyright © 2018 Christian Froehlich. All rights reserved. 
+			</div>
+		</footer><!-- #colophon -->		
+    </div>
+	
+    <!-- #page .hfeed .site -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src='/js/prettify.js' type='text/javascript'></script>
+    
+    <script type="text/javascript">
+var _gaq = _gaq || [];
+
+_gaq.push(['_setAccount', 'UA-68156920-1']);
+_gaq.push(['_trackPageview']);
+        
+(function () {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    
+    <script type='text/javascript'>
+      $(function () {
+        $("pre code").parent().each(function () {
+          if (!$(this).hasClass("prettyprint")) {
+            $(this).addClass("prettyprint");
+            a = true
+          }
+        });
+
+        prettyPrint();
+      });
+    </script>
+</body>
+</html>

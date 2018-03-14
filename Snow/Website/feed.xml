@@ -1,0 +1,1415 @@
+<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Don't make me think! - badmonkeh.com</title><subtitle type="text">Don't make me think! - badmonkeh.com</subtitle><id>http://www.badmonkeh.com/</id><updated>2018-03-14T22:19:39+11:00</updated><author><name>Christian Froehlich</name><uri>http://www.badmonkeh.com</uri></author><generator>Sandra.Snow Atom Generator</generator><link rel="alternate" href="http://www.badmonkeh.com/feed.xml" /><link rel="self" type="text/html" title="Don't make me think! - badmonkeh.com" href="http://www.badmonkeh.com/feed.xml" /><entry><id>http://www.badmonkeh.com/2018/03/14/converting-mpeg-to-h.265/</id><title type="text">Converting MPEG to H.265</title><summary type="html">&lt;h1&gt;Converting MPEG to H.265&lt;/h1&gt;
+
+&lt;p&gt;I recently took a video of a friend's performance with my DSLR and only afterwards recalled just how massive MPEG files are. The 1080p clip was only 7 minutes long but was a whopping 1.1GB! A good thing that my camera does not support 4K ;).&lt;/p&gt;
+
+&lt;p&gt;Being time poor I fanticised briefly about using Windows Movie Maker which i recall as having a degree of utility, albeit with a lot of restrictions. &lt;/p&gt;
+
+&lt;p&gt;Unfortunately the Windows 10 replacement only supports 720p at best in the free version whic is pretty dismal considering 4K is pretty standard these days and most codecs and encoding tools are open source anyway.&lt;/p&gt;
+
+&lt;p&gt;It was then that i remembered &lt;code&gt;ffmpeg&lt;/code&gt;, a really powerful open source audio/video de/encoder that i had used in the past to encode MPEG1 to either DivX or Xvid.&lt;/p&gt;
+
+&lt;p&gt;Sure enough &lt;code&gt;ffmpeg&lt;/code&gt; is still going strong and has naturally kept pace with the times and allows re-encoding in a number of modern formats.&lt;/p&gt;
+
+&lt;h2&gt;Encoding to H.265&lt;/h2&gt;
+
+&lt;p&gt;So now to the fun part the encoding. I chose encoding to H.265 as it should be about half the file size of H.264 and is a likely successor.&lt;/p&gt;
+
+&lt;h3&gt;Process&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;To start download &lt;a href="https://www.ffmpeg.org/download.html"&gt;ffmpeg&lt;/a&gt; or you can build it from source.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Re-encode it using the following command&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ffmpeg -i input.mov -c:v libx265 -preset veryslow -crf 18 -c:a aac -strict -2 -b:a 128k output.mp4&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Profit&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The above command re-encodes your mpeg into a h.265 movie using aac for audio at a very high quality (practically lossless). I should note that whilst this will produce a very high fidelity video, it may take a long time e.g. on my 16 thread machine clocked at 4.5Ghz re-encoding a 7min video took over two hours!&lt;/p&gt;
+
+&lt;p&gt;However it did manage to reduce the file size from 1.1GB to 202MB without any visual difference. To further reduce the size you could increase the CRF value, e.g. setting this to 28 produced a 54MB file with very minor quality loss.&lt;/p&gt;
+
+&lt;h3&gt;ffmpeg command arguments&lt;/h3&gt;
+
+&lt;p&gt;So let's break down the arguments provided on the command line above a bit to better understand their impact.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-i &amp;lt;filename&amp;gt;&lt;/code&gt; - This simply specifies the input filename&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-c:v libx265&lt;/code&gt; - &lt;code&gt;-c&lt;/code&gt; is an alias for &lt;code&gt;-codec:v&lt;/code&gt; or &lt;code&gt;-vcodec&lt;/code&gt; and specifies the encoder to use, in this case lixb265. You could specify libx264 for X.264 encoding.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-preset veryslow&lt;/code&gt; - This specifies the X.264/265 encoding speed, the slower it encodes the smaller the file size. Set this in the range from &lt;code&gt;veryslow&lt;/code&gt;, &lt;code&gt;slower&lt;/code&gt;, &lt;code&gt;slow&lt;/code&gt;, &lt;code&gt;medium&lt;/code&gt; (default), &lt;code&gt;fast&lt;/code&gt;, &lt;code&gt;faster&lt;/code&gt;, &lt;code&gt;veryfast&lt;/code&gt;, &lt;code&gt;superfast&lt;/code&gt; and &lt;code&gt;ultrafast&lt;/code&gt; depending on your patience ;).&lt;/p&gt;
+
+&lt;p&gt;I should note that in the example above, &lt;code&gt;veryslow&lt;/code&gt; produced a 202MB file after 135 mins but &lt;code&gt;veryfast&lt;/code&gt; produced a 288MB file after only 4 mins.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-crf 18&lt;/code&gt; - I am encoding using a constant bitrate because i care more about quality than file size, and this factor determines the output bitrate - and hence the quality. This is a scale between 0-51, where 17/18 is practically lossless and the default is 23. Experiment with higher numbers first to see if they give you an acceptable quality as they will also result in a smaller file with less encoding time.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-c:a aac&lt;/code&gt; - &lt;code&gt;-c&lt;/code&gt; is an alias for &lt;code&gt;-codec:a&lt;/code&gt; or &lt;code&gt;-acodec&lt;/code&gt; and specifies the audio encoder to use. I should note that the AAC encoder is not open source and included with the static build of ffmpeg so you need to either build it from source or use the command &lt;code&gt;-strict -2&lt;/code&gt; to use the internal encoder.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;b:a 128k&lt;/code&gt; - This specifies the audio bitrate.&lt;/p&gt;
+
+&lt;p&gt;If you want to know all of the options please be sure to read the &lt;a href="https://ffmpeg.org/ffmpeg.html"&gt;ffmpeg documentation&lt;/a&gt; or specific encoding documentation for &lt;a href="https://trac.ffmpeg.org/wiki/Encode/H.265"&gt;x.265&lt;/a&gt; or &lt;a href="https://trac.ffmpeg.org/wiki/Encode/AAC"&gt;AAC&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;I hope this is as useful a reference for you as it is for me ;), let me know in the comments if you have any tips or feedback.&lt;/p&gt;
+</summary><published>2018-03-13T13:00:00Z</published><updated>2018-03-13T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2018/03/14/converting-mpeg-to-h.265/" /><content type="html">&lt;h1&gt;Converting MPEG to H.265&lt;/h1&gt;
+
+&lt;p&gt;I recently took a video of a friend's performance with my DSLR and only afterwards recalled just how massive MPEG files are. The 1080p clip was only 7 minutes long but was a whopping 1.1GB! A good thing that my camera does not support 4K ;).&lt;/p&gt;
+
+&lt;p&gt;Being time poor I fanticised briefly about using Windows Movie Maker which i recall as having a degree of utility, albeit with a lot of restrictions. &lt;/p&gt;
+
+&lt;p&gt;Unfortunately the Windows 10 replacement only supports 720p at best in the free version whic is pretty dismal considering 4K is pretty standard these days and most codecs and encoding tools are open source anyway.&lt;/p&gt;
+
+&lt;p&gt;It was then that i remembered &lt;code&gt;ffmpeg&lt;/code&gt;, a really powerful open source audio/video de/encoder that i had used in the past to encode MPEG1 to either DivX or Xvid.&lt;/p&gt;
+
+&lt;p&gt;Sure enough &lt;code&gt;ffmpeg&lt;/code&gt; is still going strong and has naturally kept pace with the times and allows re-encoding in a number of modern formats.&lt;/p&gt;
+
+&lt;h2&gt;Encoding to H.265&lt;/h2&gt;
+
+&lt;p&gt;So now to the fun part the encoding. I chose encoding to H.265 as it should be about half the file size of H.264 and is a likely successor.&lt;/p&gt;
+
+&lt;h3&gt;Process&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;To start download &lt;a href="https://www.ffmpeg.org/download.html"&gt;ffmpeg&lt;/a&gt; or you can build it from source.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Re-encode it using the following command&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ffmpeg -i input.mov -c:v libx265 -preset veryslow -crf 18 -c:a aac -strict -2 -b:a 128k output.mp4&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Profit&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The above command re-encodes your mpeg into a h.265 movie using aac for audio at a very high quality (practically lossless). I should note that whilst this will produce a very high fidelity video, it may take a long time e.g. on my 16 thread machine clocked at 4.5Ghz re-encoding a 7min video took over two hours!&lt;/p&gt;
+
+&lt;p&gt;However it did manage to reduce the file size from 1.1GB to 202MB without any visual difference. To further reduce the size you could increase the CRF value, e.g. setting this to 28 produced a 54MB file with very minor quality loss.&lt;/p&gt;
+
+&lt;h3&gt;ffmpeg command arguments&lt;/h3&gt;
+
+&lt;p&gt;So let's break down the arguments provided on the command line above a bit to better understand their impact.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-i &amp;lt;filename&amp;gt;&lt;/code&gt; - This simply specifies the input filename&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-c:v libx265&lt;/code&gt; - &lt;code&gt;-c&lt;/code&gt; is an alias for &lt;code&gt;-codec:v&lt;/code&gt; or &lt;code&gt;-vcodec&lt;/code&gt; and specifies the encoder to use, in this case lixb265. You could specify libx264 for X.264 encoding.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-preset veryslow&lt;/code&gt; - This specifies the X.264/265 encoding speed, the slower it encodes the smaller the file size. Set this in the range from &lt;code&gt;veryslow&lt;/code&gt;, &lt;code&gt;slower&lt;/code&gt;, &lt;code&gt;slow&lt;/code&gt;, &lt;code&gt;medium&lt;/code&gt; (default), &lt;code&gt;fast&lt;/code&gt;, &lt;code&gt;faster&lt;/code&gt;, &lt;code&gt;veryfast&lt;/code&gt;, &lt;code&gt;superfast&lt;/code&gt; and &lt;code&gt;ultrafast&lt;/code&gt; depending on your patience ;).&lt;/p&gt;
+
+&lt;p&gt;I should note that in the example above, &lt;code&gt;veryslow&lt;/code&gt; produced a 202MB file after 135 mins but &lt;code&gt;veryfast&lt;/code&gt; produced a 288MB file after only 4 mins.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-crf 18&lt;/code&gt; - I am encoding using a constant bitrate because i care more about quality than file size, and this factor determines the output bitrate - and hence the quality. This is a scale between 0-51, where 17/18 is practically lossless and the default is 23. Experiment with higher numbers first to see if they give you an acceptable quality as they will also result in a smaller file with less encoding time.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-c:a aac&lt;/code&gt; - &lt;code&gt;-c&lt;/code&gt; is an alias for &lt;code&gt;-codec:a&lt;/code&gt; or &lt;code&gt;-acodec&lt;/code&gt; and specifies the audio encoder to use. I should note that the AAC encoder is not open source and included with the static build of ffmpeg so you need to either build it from source or use the command &lt;code&gt;-strict -2&lt;/code&gt; to use the internal encoder.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;b:a 128k&lt;/code&gt; - This specifies the audio bitrate.&lt;/p&gt;
+
+&lt;p&gt;If you want to know all of the options please be sure to read the &lt;a href="https://ffmpeg.org/ffmpeg.html"&gt;ffmpeg documentation&lt;/a&gt; or specific encoding documentation for &lt;a href="https://trac.ffmpeg.org/wiki/Encode/H.265"&gt;x.265&lt;/a&gt; or &lt;a href="https://trac.ffmpeg.org/wiki/Encode/AAC"&gt;AAC&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;I hope this is as useful a reference for you as it is for me ;), let me know in the comments if you have any tips or feedback.&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/</id><title type="text">Wix and the TFS 2013 build server, let's be friends</title><summary type="html">&lt;p&gt;We recently commissioned a new build server as part of an upgrade and moved to WiX 3.9R2 as part of the process. After setting up a new build profile my installer build would fail with this same message per each ICE action:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;light.exe (0): Error executing ICE action 'ICE01'. The most common cause of this kind of ICE failure is an incorrectly registered scripting engine. See &lt;a href="http://wixtoolset.org/documentation/error217/"&gt;http://wixtoolset.org/documentation/error217/&lt;/a&gt; for details and how to solve this problem. The following string format was not expected by the external UI message logger: "The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.".&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Which produces a similar message in the server's event logs:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Product: ProductNameRemoved -- Error 1719. The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point much googling leads to to a similar set of instructions, re-register msiexec, check registry permissions, etc. I tried all of these to no avail, until finally I came across an insightful post from &lt;a href="http://www.wintellect.com/devcenter/jrobbins/wix-projects-vs-tfs-2010-team-build"&gt;John Robbins&lt;/a&gt; that has the solution:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;"In order for the .WiXProj files to compile, the account running the build controller/agent must be in the local machine’s administrator group."&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Therefore the solution is simply:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Add the service account to the &lt;em&gt;Local Administrators&lt;/em&gt; user group&lt;/li&gt;
+&lt;li&gt;Restart the server&lt;/li&gt;
+&lt;li&gt;...&lt;/li&gt;
+&lt;li&gt;Profit!&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Note: If you do not already have a service account then I strongly advise you to create one, it is a dangerous security practice to run add a low privileged account like NT SERVICE as an administrator.&lt;/strong&gt;&lt;/p&gt;
+</summary><published>2015-07-06T17:15:00Z</published><updated>2015-07-06T17:15:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/" /><content type="html">&lt;p&gt;We recently commissioned a new build server as part of an upgrade and moved to WiX 3.9R2 as part of the process. After setting up a new build profile my installer build would fail with this same message per each ICE action:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;light.exe (0): Error executing ICE action 'ICE01'. The most common cause of this kind of ICE failure is an incorrectly registered scripting engine. See &lt;a href="http://wixtoolset.org/documentation/error217/"&gt;http://wixtoolset.org/documentation/error217/&lt;/a&gt; for details and how to solve this problem. The following string format was not expected by the external UI message logger: "The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.".&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Which produces a similar message in the server's event logs:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Product: ProductNameRemoved -- Error 1719. The Windows Installer Service could not be accessed. This can occur if you are running Windows in safe mode, or if the Windows Installer is not correctly installed. Contact your support personnel for assistance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point much googling leads to to a similar set of instructions, re-register msiexec, check registry permissions, etc. I tried all of these to no avail, until finally I came across an insightful post from &lt;a href="http://www.wintellect.com/devcenter/jrobbins/wix-projects-vs-tfs-2010-team-build"&gt;John Robbins&lt;/a&gt; that has the solution:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;"In order for the .WiXProj files to compile, the account running the build controller/agent must be in the local machine’s administrator group."&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Therefore the solution is simply:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Add the service account to the &lt;em&gt;Local Administrators&lt;/em&gt; user group&lt;/li&gt;
+&lt;li&gt;Restart the server&lt;/li&gt;
+&lt;li&gt;...&lt;/li&gt;
+&lt;li&gt;Profit!&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Note: If you do not already have a service account then I strongly advise you to create one, it is a dangerous security practice to run add a low privileged account like NT SERVICE as an administrator.&lt;/strong&gt;&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2013/02/12/designdata-makes-your-life-easier/</id><title type="text">DesignData makes your life easier</title><summary type="html">&lt;h1&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;Okay so I have finally jumped onto the band wagon and decided to apply my skills to Windows Phone development - after all I've had a Windows Phone since launch and I am a .NET developer. So really it's about time.&lt;/p&gt;
+
+&lt;p&gt;I won't go into the basics of how to start coding a Windows Phone application, the Windows Dev Centre really have that covered with a good variety of &lt;a title="Windows Developer Center" href="http://msdn.microsoft.com/en-us/library/windowsphone/develop/ff402551(v=vs.105).aspx"&gt;simple articles&lt;/a&gt;. What I will say however is that with XAML/Silverlight and a C# back-end, coding for Windows Phone is much like a marriage between ASP.NET and Win Forms, and a good one at that.&lt;/p&gt;
+
+&lt;p&gt;And without further adieu...&lt;/p&gt;
+
+&lt;h2&gt;On with the show&lt;/h2&gt;
+
+&lt;p&gt;Soon enough after jumping into creating your first application, hopefully you are going to discover of the MVVM design pattern and start binding your controls to properties in a ViewModel. Or regardless binding your controls to an object of some kind.&lt;/p&gt;
+
+&lt;p&gt;Here's where there is a bit of a &lt;em&gt;Gotcha&lt;/em&gt; moment, as you clear the dummy values and bind to the controls and for the most part discover that your interface is rather, well, blank. All of those lists and textboxes are not only empty but is most cases not visible at all.&lt;/p&gt;
+
+&lt;p&gt;If you are like me it is at this moment you go looking in the IDE for a suitable property to add testing data to, as seeing your UI in the Designer can sometimes be useful. And then there is the next &lt;em&gt;Gotcha&lt;/em&gt;, there isn't one.&lt;/p&gt;
+
+&lt;p&gt;Microsoft in their wisdom, most likely to confuse developers, have not made it so easy for us. But have no fear there is a way, or truth be told a few, to add some test data to your design time UI.&lt;/p&gt;
+
+&lt;h1&gt;Option #1: FallbackValue&lt;/h1&gt;
+
+&lt;p&gt;By far the easiest way to achieve this to specify a FallbackValue in the actual binding on the control. This will set a value to the control if the bound value is not available.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;HyperlinkButton Content="{Binding FooterText, FallbackValue='Foo Bar'}" /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However the drawbacks of this method are that this value will also be shown at runtime if you have no bound value, and it won't do much for any control that expects a collection be bound to it.&lt;/p&gt;
+
+&lt;h1&gt;Option #2: Create a DesignData file&lt;/h1&gt;
+
+&lt;p&gt;The next best option is to create a specific DesignData file that represents your ViewModel and contains data to be shown only at design time. This file will be written in XAML and allows you to set values for any of the public properties in your ViewModel, including any dependant types.&lt;/p&gt;
+
+&lt;p&gt;Now of course you could also use this method for any object you intend to set as the DataContext of a page or control, the method is much the same.&lt;/p&gt;
+
+&lt;p&gt;What you need to do in short is:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create a text file and name it with a .xaml extension.&lt;/li&gt;
+&lt;li&gt;Add XAML representing your ViewModel (see below)&lt;/li&gt;
+&lt;li&gt;Set the BuildAction to DesignData, and clear the CustomTool property&lt;/li&gt;
+&lt;li&gt;In your control/page, ensure that the same namespace is also defined in your control/page's tag&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add a property to your PhoneApplicationPage (or any Control) referencing your new xaml page&lt;/p&gt;
+
+&lt;p&gt;d:DataContext="{d:DesignData Source=/DesignData/MyViewModel.xaml}"&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Then bind the control as you would normally.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;Creating the XAML DesignData file&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;local:MyViewModel xmlns:local="clr-namespace:Badmonkeh.ViewModels"&amp;gt;
+   &amp;lt;MyViewModel.Items&amp;gt;
+      &amp;lt;local:MyViewModelItemCollection&amp;gt;
+         &amp;lt;local:MyViewModelItem Name="One two three four" Colour="Blue" PercentComplete="75" ShowProgress="True"/&amp;gt;
+      &amp;lt;/local:MyViewModelItemCollection&amp;gt;
+   &amp;lt;/local:MyViewModel.Items&amp;gt;
+&amp;lt;/local:MyViewModel&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this particular example I am representing a class named &lt;code&gt;MyViewModel&lt;/code&gt; which has a &lt;code&gt;MyViewModelCollection&lt;/code&gt; in a property named &lt;code&gt;Items&lt;/code&gt;. This in turn contains a &lt;code&gt;MyViewModelItem&lt;/code&gt; in its default property.&lt;/p&gt;
+
+&lt;p&gt;This is pretty standard XAML here, each property of a simple type is a simple key-value pair and each complex type must be described with a new XML element. Where a property for a complex time is not the default content property, a separate element must be created a referenced using the name of the parent class, e.g.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;MyViewModel.Items&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The important things to note here:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The declaration of the namespace corresponds to the class's full name&lt;/li&gt;
+&lt;li&gt;Generic lists are not supported so you will have to extend your own collection&lt;/li&gt;
+&lt;li&gt;Your ViewModel must have a public parameter-less constructor&lt;/li&gt;
+&lt;li&gt;Only properties with backing fields can be bound (see below).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;A caveat and a solution&lt;/h2&gt;
+
+&lt;p&gt;There is a caveat to this method, inherent in its design. What actually happens when you create a DesignData method is that the designer will create an instance of your class at design time where certain objects may not be available such as your data model, or IsolatedStorage.&lt;/p&gt;
+
+&lt;p&gt;The easiest away around this is of course to  simply use properties with backing fields but when that is not convenient you can get around this by checking if you are in design mode by calling &lt;code&gt;DesignerProperties.IsInDesignTool&lt;/code&gt; and using a backed field only for design time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public string Comment
+{
+    get
+    {
+        if (DesignerProperties.IsInDesignTool)
+            return _designerComment;
+
+        if (_blog == null) return null;
+        return _blog.Comment;
+    }
+    set
+    {
+        if (DesignerProperties.IsInDesignTool)
+            _designerComment = value;
+        else
+            _blog.Comment = value;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the example you can see that I check if we're in the designer (or Blend for that matter) and use a backed field to avoid throwing an exception which would disable the design data, or returning null which would just disable the property.&lt;/p&gt;
+
+&lt;p&gt;You might of course wonder why go to the trouble of using a backing field when I can just return a testing value in the property? Well you're right, you can. However this will override any value you specify in the design data XAML file and if this class is shared with other pages, for instance if is used by a User Control, then you won't be able to create separate design data files for different pages.&lt;/p&gt;
+
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;I have shown you a couple of ways to shows some design time data in your pages and help simplify the design process somewhat. The particular beauty of the second approach is that you can design your Control/Page first and really just consider the fields that you will need to bind to. At the time you just need to create a POCO class and only after the design is finalized implement your business logic.&lt;/p&gt;
+
+&lt;p&gt;Regardless I hope some of this was useful to you and if not, or if there is anything else I missed, hit me up in the comments below.&lt;/p&gt;
+</summary><published>2013-02-11T14:44:00Z</published><updated>2013-02-11T14:44:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2013/02/12/designdata-makes-your-life-easier/" /><content type="html">&lt;h1&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;Okay so I have finally jumped onto the band wagon and decided to apply my skills to Windows Phone development - after all I've had a Windows Phone since launch and I am a .NET developer. So really it's about time.&lt;/p&gt;
+
+&lt;p&gt;I won't go into the basics of how to start coding a Windows Phone application, the Windows Dev Centre really have that covered with a good variety of &lt;a title="Windows Developer Center" href="http://msdn.microsoft.com/en-us/library/windowsphone/develop/ff402551(v=vs.105).aspx"&gt;simple articles&lt;/a&gt;. What I will say however is that with XAML/Silverlight and a C# back-end, coding for Windows Phone is much like a marriage between ASP.NET and Win Forms, and a good one at that.&lt;/p&gt;
+
+&lt;p&gt;And without further adieu...&lt;/p&gt;
+
+&lt;h2&gt;On with the show&lt;/h2&gt;
+
+&lt;p&gt;Soon enough after jumping into creating your first application, hopefully you are going to discover of the MVVM design pattern and start binding your controls to properties in a ViewModel. Or regardless binding your controls to an object of some kind.&lt;/p&gt;
+
+&lt;p&gt;Here's where there is a bit of a &lt;em&gt;Gotcha&lt;/em&gt; moment, as you clear the dummy values and bind to the controls and for the most part discover that your interface is rather, well, blank. All of those lists and textboxes are not only empty but is most cases not visible at all.&lt;/p&gt;
+
+&lt;p&gt;If you are like me it is at this moment you go looking in the IDE for a suitable property to add testing data to, as seeing your UI in the Designer can sometimes be useful. And then there is the next &lt;em&gt;Gotcha&lt;/em&gt;, there isn't one.&lt;/p&gt;
+
+&lt;p&gt;Microsoft in their wisdom, most likely to confuse developers, have not made it so easy for us. But have no fear there is a way, or truth be told a few, to add some test data to your design time UI.&lt;/p&gt;
+
+&lt;h1&gt;Option #1: FallbackValue&lt;/h1&gt;
+
+&lt;p&gt;By far the easiest way to achieve this to specify a FallbackValue in the actual binding on the control. This will set a value to the control if the bound value is not available.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;HyperlinkButton Content="{Binding FooterText, FallbackValue='Foo Bar'}" /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However the drawbacks of this method are that this value will also be shown at runtime if you have no bound value, and it won't do much for any control that expects a collection be bound to it.&lt;/p&gt;
+
+&lt;h1&gt;Option #2: Create a DesignData file&lt;/h1&gt;
+
+&lt;p&gt;The next best option is to create a specific DesignData file that represents your ViewModel and contains data to be shown only at design time. This file will be written in XAML and allows you to set values for any of the public properties in your ViewModel, including any dependant types.&lt;/p&gt;
+
+&lt;p&gt;Now of course you could also use this method for any object you intend to set as the DataContext of a page or control, the method is much the same.&lt;/p&gt;
+
+&lt;p&gt;What you need to do in short is:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create a text file and name it with a .xaml extension.&lt;/li&gt;
+&lt;li&gt;Add XAML representing your ViewModel (see below)&lt;/li&gt;
+&lt;li&gt;Set the BuildAction to DesignData, and clear the CustomTool property&lt;/li&gt;
+&lt;li&gt;In your control/page, ensure that the same namespace is also defined in your control/page's tag&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add a property to your PhoneApplicationPage (or any Control) referencing your new xaml page&lt;/p&gt;
+
+&lt;p&gt;d:DataContext="{d:DesignData Source=/DesignData/MyViewModel.xaml}"&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Then bind the control as you would normally.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;Creating the XAML DesignData file&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;local:MyViewModel xmlns:local="clr-namespace:Badmonkeh.ViewModels"&amp;gt;
+   &amp;lt;MyViewModel.Items&amp;gt;
+      &amp;lt;local:MyViewModelItemCollection&amp;gt;
+         &amp;lt;local:MyViewModelItem Name="One two three four" Colour="Blue" PercentComplete="75" ShowProgress="True"/&amp;gt;
+      &amp;lt;/local:MyViewModelItemCollection&amp;gt;
+   &amp;lt;/local:MyViewModel.Items&amp;gt;
+&amp;lt;/local:MyViewModel&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this particular example I am representing a class named &lt;code&gt;MyViewModel&lt;/code&gt; which has a &lt;code&gt;MyViewModelCollection&lt;/code&gt; in a property named &lt;code&gt;Items&lt;/code&gt;. This in turn contains a &lt;code&gt;MyViewModelItem&lt;/code&gt; in its default property.&lt;/p&gt;
+
+&lt;p&gt;This is pretty standard XAML here, each property of a simple type is a simple key-value pair and each complex type must be described with a new XML element. Where a property for a complex time is not the default content property, a separate element must be created a referenced using the name of the parent class, e.g.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;MyViewModel.Items&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The important things to note here:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The declaration of the namespace corresponds to the class's full name&lt;/li&gt;
+&lt;li&gt;Generic lists are not supported so you will have to extend your own collection&lt;/li&gt;
+&lt;li&gt;Your ViewModel must have a public parameter-less constructor&lt;/li&gt;
+&lt;li&gt;Only properties with backing fields can be bound (see below).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;A caveat and a solution&lt;/h2&gt;
+
+&lt;p&gt;There is a caveat to this method, inherent in its design. What actually happens when you create a DesignData method is that the designer will create an instance of your class at design time where certain objects may not be available such as your data model, or IsolatedStorage.&lt;/p&gt;
+
+&lt;p&gt;The easiest away around this is of course to  simply use properties with backing fields but when that is not convenient you can get around this by checking if you are in design mode by calling &lt;code&gt;DesignerProperties.IsInDesignTool&lt;/code&gt; and using a backed field only for design time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public string Comment
+{
+    get
+    {
+        if (DesignerProperties.IsInDesignTool)
+            return _designerComment;
+
+        if (_blog == null) return null;
+        return _blog.Comment;
+    }
+    set
+    {
+        if (DesignerProperties.IsInDesignTool)
+            _designerComment = value;
+        else
+            _blog.Comment = value;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the example you can see that I check if we're in the designer (or Blend for that matter) and use a backed field to avoid throwing an exception which would disable the design data, or returning null which would just disable the property.&lt;/p&gt;
+
+&lt;p&gt;You might of course wonder why go to the trouble of using a backing field when I can just return a testing value in the property? Well you're right, you can. However this will override any value you specify in the design data XAML file and if this class is shared with other pages, for instance if is used by a User Control, then you won't be able to create separate design data files for different pages.&lt;/p&gt;
+
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;I have shown you a couple of ways to shows some design time data in your pages and help simplify the design process somewhat. The particular beauty of the second approach is that you can design your Control/Page first and really just consider the fields that you will need to bind to. At the time you just need to create a POCO class and only after the design is finalized implement your business logic.&lt;/p&gt;
+
+&lt;p&gt;Regardless I hope some of this was useful to you and if not, or if there is anything else I missed, hit me up in the comments below.&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2010/09/11/active-records-with-partial-trust-revisited/</id><title type="text">Active Records with Partial Trust, Revisited</title><summary type="html">&lt;h1&gt;Active Records with Partial Trust, Revisited&lt;/h1&gt;
+
+&lt;p&gt;Getting active records to run under medium trust is a problem i have once solved before, and after upgrading to v2.1.2 it has come back again.
+Essentially the problem is two fold:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Ensuring all referenced Castle assemblies has the APTCA attribute applied&lt;/li&gt;
+&lt;li&gt;Statically generating proxies with the APTCA attribute applied (is this still necessary?)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;To begin i need to identify which assemblies are the problem. So i created a small test project and noted the assemblies that were directly or indirectly used, using Reflector. At the same time i could go through the list and note which ones did not have the attribute applied. This lead to the following list.&lt;/p&gt;
+
+&lt;p&gt;Referenced Assemblies Without APTCA:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Castle.Core (1.2.0.0)&lt;/li&gt;
+&lt;li&gt;Castle.Components.Validator (1.1.1.0)&lt;/li&gt;
+&lt;li&gt;Castle.ActiveRecord (2.1.2)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now in order to call these assemblies under medium trust i will have to rebuild them, applying the correct attribute, this could be quite a problem but fortunately Active Records is an open source project.
+After a short search i discovered that the source is now stored at Github: http://github.com/castleproject&lt;/p&gt;
+
+&lt;p&gt;Then it was a simple case of downloading the source, labeled at the appropriate versions listed above.&lt;/p&gt;
+
+&lt;p&gt;This however seemed to be more trouble that it was worth, given that the code was hard to build when it was first split into individual projects (read: required Nant and i couldn't be bothered.)&lt;/p&gt;
+
+&lt;p&gt;Building the projects from source was simple enough when you copy in the buildscripts\ folder from the root project 'castle'. You might have manually reference the key to get them strong named but this is a simple matter.&lt;/p&gt;
+
+&lt;p&gt;From here all you have to do is apply the attribute as below to the CommonAssemblyInfo file, and voila you are done.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[assembly: System.Security.AllowPartiallyTrustedCallers]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your website is just a personal site and you do not have strongly name assemblies, then this is all you need to do.&lt;/p&gt;
+
+&lt;p&gt;Step 2 is the harder part. Assuming your assemblies are strongly signed, ensure first that they also have the APTCA.&lt;/p&gt;
+</summary><published>2010-09-10T14:00:00Z</published><updated>2010-09-10T14:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2010/09/11/active-records-with-partial-trust-revisited/" /><content type="html">&lt;h1&gt;Active Records with Partial Trust, Revisited&lt;/h1&gt;
+
+&lt;p&gt;Getting active records to run under medium trust is a problem i have once solved before, and after upgrading to v2.1.2 it has come back again.
+Essentially the problem is two fold:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Ensuring all referenced Castle assemblies has the APTCA attribute applied&lt;/li&gt;
+&lt;li&gt;Statically generating proxies with the APTCA attribute applied (is this still necessary?)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;To begin i need to identify which assemblies are the problem. So i created a small test project and noted the assemblies that were directly or indirectly used, using Reflector. At the same time i could go through the list and note which ones did not have the attribute applied. This lead to the following list.&lt;/p&gt;
+
+&lt;p&gt;Referenced Assemblies Without APTCA:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Castle.Core (1.2.0.0)&lt;/li&gt;
+&lt;li&gt;Castle.Components.Validator (1.1.1.0)&lt;/li&gt;
+&lt;li&gt;Castle.ActiveRecord (2.1.2)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now in order to call these assemblies under medium trust i will have to rebuild them, applying the correct attribute, this could be quite a problem but fortunately Active Records is an open source project.
+After a short search i discovered that the source is now stored at Github: http://github.com/castleproject&lt;/p&gt;
+
+&lt;p&gt;Then it was a simple case of downloading the source, labeled at the appropriate versions listed above.&lt;/p&gt;
+
+&lt;p&gt;This however seemed to be more trouble that it was worth, given that the code was hard to build when it was first split into individual projects (read: required Nant and i couldn't be bothered.)&lt;/p&gt;
+
+&lt;p&gt;Building the projects from source was simple enough when you copy in the buildscripts\ folder from the root project 'castle'. You might have manually reference the key to get them strong named but this is a simple matter.&lt;/p&gt;
+
+&lt;p&gt;From here all you have to do is apply the attribute as below to the CommonAssemblyInfo file, and voila you are done.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[assembly: System.Security.AllowPartiallyTrustedCallers]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your website is just a personal site and you do not have strongly name assemblies, then this is all you need to do.&lt;/p&gt;
+
+&lt;p&gt;Step 2 is the harder part. Assuming your assemblies are strongly signed, ensure first that they also have the APTCA.&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2010/08/14/upgrading-castle-active-recods/</id><title type="text">Upgrading Castle Active Records</title><summary type="html">&lt;h1&gt;Upgrading Castle Active Records&lt;/h1&gt;
+
+&lt;p&gt;From 1.0.3.0 (custom build) to 2.1.2&lt;/p&gt;
+
+&lt;p&gt;Downloaded binaries from http://sourceforge.net/projects/castleproject/files/ActiveRecord/2.1/AR%202.1.2.zip/download&lt;/p&gt;
+
+&lt;p&gt;I downloaded the binaries, and replaced my reference libraries. To my surprised there were no build errors.&lt;/p&gt;
+
+&lt;p&gt;Intrigued, i wandered onto the documentation to see what new features/syntax i could use.
+Some notable things i found:&lt;/p&gt;
+
+&lt;p&gt;You can now initialise active records by just supplying an assembly, and letting it reflect the types for you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ActiveRecordsStarter.Initialize(Assembly assembly, IConfigurationSource source)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Warning: Try to create an Assembly exclusively for ActiveRecord types if you can. This overload will inspect all public types. If there are thousands of types, this can take a considerable amount of time.&lt;/p&gt;
+
+&lt;p&gt;Some validation attribute (Validators):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ValidateIsUnique,ValidateRegExp,ValidateEmail,ValidateNonEmpty,ValidateConfirmation
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Generics support:&lt;/p&gt;
+
+&lt;p&gt;extend generic base class &lt;code&gt;ActiveRecordBase&amp;lt;T&amp;gt;&lt;/code&gt; or for inherent validation support extend &lt;code&gt;ActiveRecordValidationBase&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Note however that if a record is invalid and you try to save it, it will throw an error. Be sure to check it's IsValid method first.&lt;/p&gt;
+
+&lt;p&gt;What doesn't work is my proxy class generation.&lt;/p&gt;
+
+&lt;p&gt;So i decided to upgrade to using the NHibernate Proxy Generators (http://sourceforge.net/projects/nhcontrib/files/NHibernate.ProxyGenerators/1.0.0%20Alpha%20564/)&lt;/p&gt;
+
+&lt;p&gt;Here's a how to: http://nhforge.org/wikis/howtonh/pre-generate-lazy-loading-proxies.aspx&lt;/p&gt;
+
+&lt;p&gt;Unfortunately i had the same issue as last time, that it just does not work for NHibernate 2.2&lt;/p&gt;
+
+&lt;p&gt;So i decided to have a play around with the source code a little.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Converted the project to VS2010.&lt;/li&gt;
+&lt;li&gt;Deleted all in libs except for IlMerge.exe&lt;/li&gt;
+&lt;li&gt;Pasted new AR libs in there&lt;/li&gt;
+&lt;li&gt;Set all projects target to .NET 3.5&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;CastleStaticProxyFactory&lt;/code&gt;
+ - commented out //using NHibernate.Proxy.Poco.Castle;
+ - replaced with NHibernate.ByteCode.Castle
+ - changed CastleLazyInitializer to LazyInitializer&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CastleProxyFactoryFactory&lt;/code&gt; : &lt;code&gt;IProxyFactoryFactory&lt;/code&gt;
+ - added stub method for &lt;code&gt;ProxyValidator&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CastleStaticProxyFactoryFactory&lt;/code&gt;
+ - added stub method for &lt;code&gt;ProxyValidator&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Had to add reference to &lt;code&gt;NHibernate.ProxyGenerators.ActiveRecord&lt;/code&gt; to the console project&lt;/p&gt;
+
+&lt;p&gt;Commented instantiation of &lt;code&gt;SessionFactory&lt;/code&gt; - is this the right thing to do?&lt;/p&gt;
+
+&lt;p&gt;CastleProxyGenerator
+ - commented out //using global::Castle.DynamicProxy;
+    + we want to use the new ProxyGenerator v2
+ - added using Castle.DynamicProxy;
+ - changed ModuleScope to save weakly named assembly only (to avoid an error) - moduleScope.SaveAssembly(false);
+    + for some reason a strongly named assembly doesn't contain the factory classes?
+ - added compiler reference - references.Add(Assembly.Load("NHibernate.ByteCode.Castle"));, also Castle.ActiveRecord 
+ - altered the compilation to add the input assemblies as references to creating the StaticProxyFactory&lt;/p&gt;
+
+&lt;p&gt;Removed Post Build Event:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;"$(SolutionDir)libs\NHibernateProxyGenerator\NPG.exe" /in:"$(TargetDir)BadMonkeh.DAO.dll" /out:"$(SolutionDir)BadMonkeh.Website\bin\BadMonkeh.DAO.Proxies.dll"
+copy "$(TargetPath)" "$(SolutionDir)BadMonkeh.Website\bin\$(TargetFileName)"
+&lt;/code&gt;&lt;/pre&gt;
+</summary><published>2010-08-13T14:00:00Z</published><updated>2010-08-13T14:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2010/08/14/upgrading-castle-active-recods/" /><content type="html">&lt;h1&gt;Upgrading Castle Active Records&lt;/h1&gt;
+
+&lt;p&gt;From 1.0.3.0 (custom build) to 2.1.2&lt;/p&gt;
+
+&lt;p&gt;Downloaded binaries from http://sourceforge.net/projects/castleproject/files/ActiveRecord/2.1/AR%202.1.2.zip/download&lt;/p&gt;
+
+&lt;p&gt;I downloaded the binaries, and replaced my reference libraries. To my surprised there were no build errors.&lt;/p&gt;
+
+&lt;p&gt;Intrigued, i wandered onto the documentation to see what new features/syntax i could use.
+Some notable things i found:&lt;/p&gt;
+
+&lt;p&gt;You can now initialise active records by just supplying an assembly, and letting it reflect the types for you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ActiveRecordsStarter.Initialize(Assembly assembly, IConfigurationSource source)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Warning: Try to create an Assembly exclusively for ActiveRecord types if you can. This overload will inspect all public types. If there are thousands of types, this can take a considerable amount of time.&lt;/p&gt;
+
+&lt;p&gt;Some validation attribute (Validators):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ValidateIsUnique,ValidateRegExp,ValidateEmail,ValidateNonEmpty,ValidateConfirmation
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Generics support:&lt;/p&gt;
+
+&lt;p&gt;extend generic base class &lt;code&gt;ActiveRecordBase&amp;lt;T&amp;gt;&lt;/code&gt; or for inherent validation support extend &lt;code&gt;ActiveRecordValidationBase&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Note however that if a record is invalid and you try to save it, it will throw an error. Be sure to check it's IsValid method first.&lt;/p&gt;
+
+&lt;p&gt;What doesn't work is my proxy class generation.&lt;/p&gt;
+
+&lt;p&gt;So i decided to upgrade to using the NHibernate Proxy Generators (http://sourceforge.net/projects/nhcontrib/files/NHibernate.ProxyGenerators/1.0.0%20Alpha%20564/)&lt;/p&gt;
+
+&lt;p&gt;Here's a how to: http://nhforge.org/wikis/howtonh/pre-generate-lazy-loading-proxies.aspx&lt;/p&gt;
+
+&lt;p&gt;Unfortunately i had the same issue as last time, that it just does not work for NHibernate 2.2&lt;/p&gt;
+
+&lt;p&gt;So i decided to have a play around with the source code a little.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Converted the project to VS2010.&lt;/li&gt;
+&lt;li&gt;Deleted all in libs except for IlMerge.exe&lt;/li&gt;
+&lt;li&gt;Pasted new AR libs in there&lt;/li&gt;
+&lt;li&gt;Set all projects target to .NET 3.5&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;CastleStaticProxyFactory&lt;/code&gt;
+ - commented out //using NHibernate.Proxy.Poco.Castle;
+ - replaced with NHibernate.ByteCode.Castle
+ - changed CastleLazyInitializer to LazyInitializer&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CastleProxyFactoryFactory&lt;/code&gt; : &lt;code&gt;IProxyFactoryFactory&lt;/code&gt;
+ - added stub method for &lt;code&gt;ProxyValidator&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CastleStaticProxyFactoryFactory&lt;/code&gt;
+ - added stub method for &lt;code&gt;ProxyValidator&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Had to add reference to &lt;code&gt;NHibernate.ProxyGenerators.ActiveRecord&lt;/code&gt; to the console project&lt;/p&gt;
+
+&lt;p&gt;Commented instantiation of &lt;code&gt;SessionFactory&lt;/code&gt; - is this the right thing to do?&lt;/p&gt;
+
+&lt;p&gt;CastleProxyGenerator
+ - commented out //using global::Castle.DynamicProxy;
+    + we want to use the new ProxyGenerator v2
+ - added using Castle.DynamicProxy;
+ - changed ModuleScope to save weakly named assembly only (to avoid an error) - moduleScope.SaveAssembly(false);
+    + for some reason a strongly named assembly doesn't contain the factory classes?
+ - added compiler reference - references.Add(Assembly.Load("NHibernate.ByteCode.Castle"));, also Castle.ActiveRecord 
+ - altered the compilation to add the input assemblies as references to creating the StaticProxyFactory&lt;/p&gt;
+
+&lt;p&gt;Removed Post Build Event:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;"$(SolutionDir)libs\NHibernateProxyGenerator\NPG.exe" /in:"$(TargetDir)BadMonkeh.DAO.dll" /out:"$(SolutionDir)BadMonkeh.Website\bin\BadMonkeh.DAO.Proxies.dll"
+copy "$(TargetPath)" "$(SolutionDir)BadMonkeh.Website\bin\$(TargetFileName)"
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2010/02/11/catching-unhandled-exceptions-at-the-lowest-level-for-all-threads/</id><title type="text">Catching unhandled exceptions at the lowest level for all threads</title><summary type="html">&lt;h1&gt;Catching unhandled exceptions at the lowest level for all threads&lt;/h1&gt;
+
+&lt;p&gt;When designing a responsible application it always pays to think about exception handling. Of course it is good practice to not use "catch-all" exception blocks as this makes it easier to find bugs within the system. However when a user invariably finds one, you ideally don't want your application to just crash. You may wish to show them a pretty dialog, or in the very least log the exception details to help you fix it.&lt;/p&gt;
+
+&lt;p&gt;If you only ever use a single thread in your application then you can get away with the below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;try
+{
+    Application.Run(new MyApp());
+}
+catch (Exception ex)
+{
+    //handle error here
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This happens to work well, however what if you are using separate threads to do processing so that you don't tie up the UI? These events will never be handled by this handled, and hence will crash your app.&lt;/p&gt;
+
+&lt;p&gt;The solution however is not that difficult. There are likely a few ways you could go about this but this one seems the easiest to me.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;static void Main()
+{
+    // this event handler works for all threads BUT the main thread
+    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    // this event handler ONLY works for the main thread
+    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    // this ensures that the handler will ALWAYS get the event and so can't be reconfigured in the app.config
+    // this may or may not be applicable to you
+    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+    Application.Run(new MyApp());
+}
+
+private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+{
+    HandleUnhandledException(e.ExceptionObject.ToString());
+}
+
+private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+{
+    HandleUnhandledException(e.Exception.ToString());
+}
+
+private static void HandleUnhandledException(string exceptionMessage)
+{
+    //log exception and show dialog here
+
+    Application.Exit();
+}
+&lt;/code&gt;&lt;/pre&gt;
+</summary><published>2010-02-10T13:00:00Z</published><updated>2010-02-10T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2010/02/11/catching-unhandled-exceptions-at-the-lowest-level-for-all-threads/" /><content type="html">&lt;h1&gt;Catching unhandled exceptions at the lowest level for all threads&lt;/h1&gt;
+
+&lt;p&gt;When designing a responsible application it always pays to think about exception handling. Of course it is good practice to not use "catch-all" exception blocks as this makes it easier to find bugs within the system. However when a user invariably finds one, you ideally don't want your application to just crash. You may wish to show them a pretty dialog, or in the very least log the exception details to help you fix it.&lt;/p&gt;
+
+&lt;p&gt;If you only ever use a single thread in your application then you can get away with the below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;try
+{
+    Application.Run(new MyApp());
+}
+catch (Exception ex)
+{
+    //handle error here
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This happens to work well, however what if you are using separate threads to do processing so that you don't tie up the UI? These events will never be handled by this handled, and hence will crash your app.&lt;/p&gt;
+
+&lt;p&gt;The solution however is not that difficult. There are likely a few ways you could go about this but this one seems the easiest to me.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;static void Main()
+{
+    // this event handler works for all threads BUT the main thread
+    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    // this event handler ONLY works for the main thread
+    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    // this ensures that the handler will ALWAYS get the event and so can't be reconfigured in the app.config
+    // this may or may not be applicable to you
+    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+    Application.Run(new MyApp());
+}
+
+private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+{
+    HandleUnhandledException(e.ExceptionObject.ToString());
+}
+
+private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+{
+    HandleUnhandledException(e.Exception.ToString());
+}
+
+private static void HandleUnhandledException(string exceptionMessage)
+{
+    //log exception and show dialog here
+
+    Application.Exit();
+}
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2010/02/11/line-highlighting-in-a-richtextbox/</id><title type="text">Line highlighting in a RichTextBox</title><summary type="html">&lt;h1&gt;Line highlighting in a RichTextBox&lt;/h1&gt;
+
+&lt;p&gt;I often find myself writing little tools to perform specific purposes, as is the wont of a programmer.&lt;/p&gt;
+
+&lt;p&gt;However, mostly out of laziness, i tend to avoid writing command line utils and instead prefer little GUI apps. They allow me to add features that i can't have with a CLI, such as persisting settings and allowing file selection dialogs.&lt;/p&gt;
+
+&lt;p&gt;Anyways, one of the easiest ways to adapt a console app is to create a windows forms app that features a text box containing the output of whatever you wish to achieve. Now this itself is quite easy to do, however it is just as one dimensional as a console app. Why, you may ask, it is because you are still limited to displaying text in one colour. Should you wish to clearly identify your output you are limited to formatting the position or the characters of the text, which can be quite limiting. For example what if you wanted the errors in a process to be more visible that informational messages?&lt;/p&gt;
+
+&lt;p&gt;The solution is to use a RichTextBox. It allows you all of the rich text formatting of a rudimentary RTF editor, such as Wordpad. You could even display HTML in it.&lt;/p&gt;
+
+&lt;p&gt;Now, you could change your input to have the appropriate HTML/RTF tags, but this is a quite heavy handed approach and requires you to combine the format with the data. All i really want is to be able to change the colour of text as i insert it, quickly an easily. And here is a method to just do that:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    /// &amp;lt;summary&amp;gt;
+    /// Appends a log message and highlights it with the specified text colour
+    /// &amp;lt;/summary&amp;gt;
+    /// &amp;lt;param name="message"&amp;gt;The message to append&amp;lt;/param&amp;gt;
+    /// &amp;lt;param name="colour"&amp;gt;The colour to display the text in&amp;lt;/param&amp;gt;
+    private void AppendAndHighlightLogMessage(string message, Color colour)
+    {
+        int startIndex = txtLog.Text.Length;
+        txtLog.AppendText(message + Environment.NewLine);
+        txtLog.Select(startIndex, message.Length);
+        txtLog.SelectionColor = colour;            
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example we have a &lt;code&gt;RichTextBox&lt;/code&gt; named &lt;code&gt;txtLog&lt;/code&gt;, and we are appending a string to it and highlighting only that with the colour specified.&lt;/p&gt;
+
+&lt;p&gt;It is important to note that you call the &lt;code&gt;AppendText(..)&lt;/code&gt; method. If you just set the text using &lt;code&gt;txtLog.Text += message;&lt;/code&gt; this will not work!&lt;/p&gt;
+
+&lt;p&gt;One of the nice things about this approach is even though you are only 'highlighting' the text, the colour will remain.&lt;/p&gt;
+</summary><published>2010-02-10T13:00:00Z</published><updated>2010-02-10T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2010/02/11/line-highlighting-in-a-richtextbox/" /><content type="html">&lt;h1&gt;Line highlighting in a RichTextBox&lt;/h1&gt;
+
+&lt;p&gt;I often find myself writing little tools to perform specific purposes, as is the wont of a programmer.&lt;/p&gt;
+
+&lt;p&gt;However, mostly out of laziness, i tend to avoid writing command line utils and instead prefer little GUI apps. They allow me to add features that i can't have with a CLI, such as persisting settings and allowing file selection dialogs.&lt;/p&gt;
+
+&lt;p&gt;Anyways, one of the easiest ways to adapt a console app is to create a windows forms app that features a text box containing the output of whatever you wish to achieve. Now this itself is quite easy to do, however it is just as one dimensional as a console app. Why, you may ask, it is because you are still limited to displaying text in one colour. Should you wish to clearly identify your output you are limited to formatting the position or the characters of the text, which can be quite limiting. For example what if you wanted the errors in a process to be more visible that informational messages?&lt;/p&gt;
+
+&lt;p&gt;The solution is to use a RichTextBox. It allows you all of the rich text formatting of a rudimentary RTF editor, such as Wordpad. You could even display HTML in it.&lt;/p&gt;
+
+&lt;p&gt;Now, you could change your input to have the appropriate HTML/RTF tags, but this is a quite heavy handed approach and requires you to combine the format with the data. All i really want is to be able to change the colour of text as i insert it, quickly an easily. And here is a method to just do that:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    /// &amp;lt;summary&amp;gt;
+    /// Appends a log message and highlights it with the specified text colour
+    /// &amp;lt;/summary&amp;gt;
+    /// &amp;lt;param name="message"&amp;gt;The message to append&amp;lt;/param&amp;gt;
+    /// &amp;lt;param name="colour"&amp;gt;The colour to display the text in&amp;lt;/param&amp;gt;
+    private void AppendAndHighlightLogMessage(string message, Color colour)
+    {
+        int startIndex = txtLog.Text.Length;
+        txtLog.AppendText(message + Environment.NewLine);
+        txtLog.Select(startIndex, message.Length);
+        txtLog.SelectionColor = colour;            
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example we have a &lt;code&gt;RichTextBox&lt;/code&gt; named &lt;code&gt;txtLog&lt;/code&gt;, and we are appending a string to it and highlighting only that with the colour specified.&lt;/p&gt;
+
+&lt;p&gt;It is important to note that you call the &lt;code&gt;AppendText(..)&lt;/code&gt; method. If you just set the text using &lt;code&gt;txtLog.Text += message;&lt;/code&gt; this will not work!&lt;/p&gt;
+
+&lt;p&gt;One of the nice things about this approach is even though you are only 'highlighting' the text, the colour will remain.&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2009/07/28/creating-databound-custom-controls/</id><title type="text">Creating a custom databound control with postbacks</title><summary type="html">&lt;h1&gt;Creating a custom databound control with postbacks&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;/// &amp;lt;summary&amp;gt;
+/// Creating a custom databound control with postbacks
+/// --------------------------------------------------
+/// This class provides you the basis for a databound custom control
+/// and shows you where to place logic to ensure the data is saved in
+/// the ViewState and the dynamically created child controls work
+/// as intended
+/// &amp;lt;/summary&amp;gt;
+class MyControl : Control
+{
+    private object datasource;
+    //CF: A list we are using for example
+    private RadioButtonList _List;
+
+    //CF: Define this as whatever you want if this control is databound
+    //    This object should not be persisted as you are relying on ViewState
+    public object DataSource
+    { 
+        get { return datasource; }
+        set { datasource = value; }
+    }
+
+    //CF: This variable holds the number of items that were databound
+    //    It is used on post back to recreate the items that are stored in the ViewState
+    private int NumberOfItems
+    {
+        get
+        {
+            if (ViewState["NumberOfItems"] == null)
+                return 0;
+            return (int) ViewState["NumberOfItems"];
+        }
+        set { ViewState["NumberOfItems"] = value; }
+    }   
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        //CF: The controls must be created here otherwise the postback data will not be loaded!!!
+        EnsureChildControls();
+
+        //CF: If your control requires ControlState uncomment this line
+        //Page.RegisterRequiresControlState(this);
+    }
+
+    protected override void CreateChildControls()
+    {
+        //CF: Only create the list and it's items here it will be populated on databinding, or via viewstate
+        _List = new RadioButtonList();
+        for (int i = 0; i &amp;lt; NumberOfItems; i++)
+        {
+            ListItem item = new ListItem();
+            _List.Items.Add(item);
+        }
+        Controls.Add(_List);
+
+        //CF: Setting additional properties of the controls should be done *after* 
+        //    they are added to Controls collection. This will "dirty" the ViewState
+        //    and ensure their value is persisted
+        //    Ensure you give your dynamic controls an ID, to associate them to their 
+        //    ViewState data
+        _List.ID = "list";
+    }
+
+    protected override void OnDataBinding(EventArgs e)
+    {
+        //CF: You need to set the number of items here
+        NumberOfItems = DataSource.Count;
+
+        //CF: As the list was already created in OnInit() with no items, it must be recreated here
+        Controls.Clear();
+        CreateChildControls();
+
+        //CF: Now we loop through each item and databind it's actual value
+        for (int i = 0; i &amp;lt; NumberOfItems; i++)
+        {
+            ListItem item = _List.Items[i];
+            //TODO: Obtain the value from the DataSource and set the Controls properties
+        }
+    }
+
+    //CF: If necessary override Render() to specify custom control rendering, otherwise leave it as it is
+    //protected override void Render(HtmlTextWriter writer)
+    //{
+    //  //TODO: Do stuff
+    //}
+
+    //CF: If you are using control state uncomment the following 2 paragraphs and customise them 
+    //    as necessary. If you need to save multiple objects it is probably best to wrap them up
+    //    in a struct/class.
+    //    Remember all objects must be Serializable.
+    /*
+    protected override void LoadControlState(object savedState)
+    {
+        object[] state = (object[]) savedState;
+        base.LoadControlState(state[0]);
+        MyObject = state[1];
+    }
+
+    protected override object SaveControlState()
+    {
+        object[] state = new object[2];
+        state[0] = base.SaveControlState();
+        state[1] = MyObject;
+        return state;
+    }   
+    */
+}
+&lt;/code&gt;&lt;/pre&gt;
+</summary><published>2009-07-27T14:00:00Z</published><updated>2009-07-27T14:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2009/07/28/creating-databound-custom-controls/" /><content type="html">&lt;h1&gt;Creating a custom databound control with postbacks&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;/// &amp;lt;summary&amp;gt;
+/// Creating a custom databound control with postbacks
+/// --------------------------------------------------
+/// This class provides you the basis for a databound custom control
+/// and shows you where to place logic to ensure the data is saved in
+/// the ViewState and the dynamically created child controls work
+/// as intended
+/// &amp;lt;/summary&amp;gt;
+class MyControl : Control
+{
+    private object datasource;
+    //CF: A list we are using for example
+    private RadioButtonList _List;
+
+    //CF: Define this as whatever you want if this control is databound
+    //    This object should not be persisted as you are relying on ViewState
+    public object DataSource
+    { 
+        get { return datasource; }
+        set { datasource = value; }
+    }
+
+    //CF: This variable holds the number of items that were databound
+    //    It is used on post back to recreate the items that are stored in the ViewState
+    private int NumberOfItems
+    {
+        get
+        {
+            if (ViewState["NumberOfItems"] == null)
+                return 0;
+            return (int) ViewState["NumberOfItems"];
+        }
+        set { ViewState["NumberOfItems"] = value; }
+    }   
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        //CF: The controls must be created here otherwise the postback data will not be loaded!!!
+        EnsureChildControls();
+
+        //CF: If your control requires ControlState uncomment this line
+        //Page.RegisterRequiresControlState(this);
+    }
+
+    protected override void CreateChildControls()
+    {
+        //CF: Only create the list and it's items here it will be populated on databinding, or via viewstate
+        _List = new RadioButtonList();
+        for (int i = 0; i &amp;lt; NumberOfItems; i++)
+        {
+            ListItem item = new ListItem();
+            _List.Items.Add(item);
+        }
+        Controls.Add(_List);
+
+        //CF: Setting additional properties of the controls should be done *after* 
+        //    they are added to Controls collection. This will "dirty" the ViewState
+        //    and ensure their value is persisted
+        //    Ensure you give your dynamic controls an ID, to associate them to their 
+        //    ViewState data
+        _List.ID = "list";
+    }
+
+    protected override void OnDataBinding(EventArgs e)
+    {
+        //CF: You need to set the number of items here
+        NumberOfItems = DataSource.Count;
+
+        //CF: As the list was already created in OnInit() with no items, it must be recreated here
+        Controls.Clear();
+        CreateChildControls();
+
+        //CF: Now we loop through each item and databind it's actual value
+        for (int i = 0; i &amp;lt; NumberOfItems; i++)
+        {
+            ListItem item = _List.Items[i];
+            //TODO: Obtain the value from the DataSource and set the Controls properties
+        }
+    }
+
+    //CF: If necessary override Render() to specify custom control rendering, otherwise leave it as it is
+    //protected override void Render(HtmlTextWriter writer)
+    //{
+    //  //TODO: Do stuff
+    //}
+
+    //CF: If you are using control state uncomment the following 2 paragraphs and customise them 
+    //    as necessary. If you need to save multiple objects it is probably best to wrap them up
+    //    in a struct/class.
+    //    Remember all objects must be Serializable.
+    /*
+    protected override void LoadControlState(object savedState)
+    {
+        object[] state = (object[]) savedState;
+        base.LoadControlState(state[0]);
+        MyObject = state[1];
+    }
+
+    protected override object SaveControlState()
+    {
+        object[] state = new object[2];
+        state[0] = base.SaveControlState();
+        state[1] = MyObject;
+        return state;
+    }   
+    */
+}
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/</id><title type="text">Creating controls that contain other controls (at design time)</title><summary type="html">&lt;h1&gt;Creating controls that contain other controls (at design time)&lt;/h1&gt;
+
+&lt;p&gt;I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
+There are 2 parts of this.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adding controls to a collection at design time.
+An example of this would be a &lt;code&gt;DataGrid&lt;/code&gt;'s Columns property. e.g.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;code&gt;
+    &amp;lt;asp:DataGrid&amp;gt;
+        &amp;lt;Columns&amp;gt;
+            &amp;lt;asp:Column /&amp;gt;
+            &amp;lt;asp:Column /&amp;gt;
+        &amp;lt;/Columns&amp;gt;
+    &amp;lt;/asp:DataGrid&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
+public virtual DataGridColumnCollection Columns
+{ get; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
+The key attribute here is &lt;code&gt;PersistenceMode&lt;/code&gt;. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public enum PersistenceMode
+{
+    Attribute,
+    InnerProperty,
+    InnerDefaultProperty,
+    EncodedInnerDefaultProperty
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.&lt;/p&gt;
+
+&lt;p&gt;The one we are interested in is &lt;code&gt;InnerProperty&lt;/code&gt;. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
+If you add &lt;code&gt;[PersistenceMode(PersistenceMode.InnerProperty)]&lt;/code&gt; to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.&lt;/p&gt;
+
+&lt;p&gt;Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.&lt;/p&gt;
+
+&lt;p&gt;Note: In order for this to work properly your control must extend from &lt;code&gt;UserControl&lt;/code&gt;and not Control :)&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Creating a dynamic templated control to contain other controls&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.&lt;/p&gt;
+
+&lt;p&gt;If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:&lt;/p&gt;
+
+&lt;p&gt;```
+    public class TestTab : UserControl
+    {
+        private PlaceHolder _ContentPlaceHolder;
+        private ITemplate _ContentTemplate;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    [PersistenceMode(PersistenceMode.InnerProperty)]
+    [TemplateInstance(TemplateInstance.Single)]
+    public ITemplate ContentTemplate
+    {
+        get { return _ContentTemplate; }
+        set { _ContentTemplate = value; }
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (_ContentPlaceHolder == null)
+        {
+            _ContentPlaceHolder = new PlaceHolder();
+            this.Controls.Add(_ContentPlaceHolder);
+        }
+
+        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+&lt;p&gt;Okay, first you need to create a class that extends from &lt;code&gt;UserControl&lt;/code&gt;. You can instead extend from Control if you like, but you have to implement the interface &lt;code&gt;INamingContainer&lt;/code&gt;. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.&lt;/p&gt;
+
+&lt;p&gt;Next add a &lt;code&gt;PlaceHolder&lt;/code&gt; to hold the template for obvious reasons. Then create an &lt;code&gt;ITemplate&lt;/code&gt; property. The important thing to note here is that you set the &lt;code&gt;PersistenceMode&lt;/code&gt; (as defined above) so you can easily set it's contents declaratively.&lt;/p&gt;
+
+&lt;p&gt;Also the &lt;code&gt;TemplateInstance.Single&lt;/code&gt; attribute value as it allows you to reference the templated controls directly within the page.&lt;/p&gt;
+
+&lt;p&gt;Finally the real meat of it. In the &lt;code&gt;OnInit&lt;/code&gt; event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.&lt;/p&gt;
+
+&lt;p&gt;The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.&lt;/p&gt;
+
+&lt;p&gt;I have not tested the ViewState of this, but it should all work.&lt;/p&gt;
+
+&lt;p&gt;Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx&lt;/p&gt;
+
+&lt;p&gt;Note2: Ensure the controls are create in Init to access them in Page&lt;em&gt;Load (otherwise they'll be created in Page&lt;/em&gt;PreRender)&lt;/p&gt;
+
+&lt;p&gt;REF: http://www.csharper.net/blog/container&lt;em&gt;user&lt;/em&gt;controls&lt;em&gt;_&lt;/em&gt;user&lt;em&gt;controls&lt;/em&gt;that&lt;em&gt;can&lt;/em&gt;contain&lt;em&gt;other&lt;/em&gt;controls.aspx - Comment by Ego&lt;/p&gt;
+
+&lt;p&gt;also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx&lt;/p&gt;
+</summary><published>2009-02-03T13:00:00Z</published><updated>2009-02-03T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/" /><content type="html">&lt;h1&gt;Creating controls that contain other controls (at design time)&lt;/h1&gt;
+
+&lt;p&gt;I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
+There are 2 parts of this.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adding controls to a collection at design time.
+An example of this would be a &lt;code&gt;DataGrid&lt;/code&gt;'s Columns property. e.g.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;code&gt;
+    &amp;lt;asp:DataGrid&amp;gt;
+        &amp;lt;Columns&amp;gt;
+            &amp;lt;asp:Column /&amp;gt;
+            &amp;lt;asp:Column /&amp;gt;
+        &amp;lt;/Columns&amp;gt;
+    &amp;lt;/asp:DataGrid&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
+public virtual DataGridColumnCollection Columns
+{ get; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
+The key attribute here is &lt;code&gt;PersistenceMode&lt;/code&gt;. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public enum PersistenceMode
+{
+    Attribute,
+    InnerProperty,
+    InnerDefaultProperty,
+    EncodedInnerDefaultProperty
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.&lt;/p&gt;
+
+&lt;p&gt;The one we are interested in is &lt;code&gt;InnerProperty&lt;/code&gt;. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
+If you add &lt;code&gt;[PersistenceMode(PersistenceMode.InnerProperty)]&lt;/code&gt; to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.&lt;/p&gt;
+
+&lt;p&gt;Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.&lt;/p&gt;
+
+&lt;p&gt;Note: In order for this to work properly your control must extend from &lt;code&gt;UserControl&lt;/code&gt;and not Control :)&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Creating a dynamic templated control to contain other controls&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.&lt;/p&gt;
+
+&lt;p&gt;If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:&lt;/p&gt;
+
+&lt;p&gt;```
+    public class TestTab : UserControl
+    {
+        private PlaceHolder _ContentPlaceHolder;
+        private ITemplate _ContentTemplate;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    [PersistenceMode(PersistenceMode.InnerProperty)]
+    [TemplateInstance(TemplateInstance.Single)]
+    public ITemplate ContentTemplate
+    {
+        get { return _ContentTemplate; }
+        set { _ContentTemplate = value; }
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (_ContentPlaceHolder == null)
+        {
+            _ContentPlaceHolder = new PlaceHolder();
+            this.Controls.Add(_ContentPlaceHolder);
+        }
+
+        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+&lt;p&gt;Okay, first you need to create a class that extends from &lt;code&gt;UserControl&lt;/code&gt;. You can instead extend from Control if you like, but you have to implement the interface &lt;code&gt;INamingContainer&lt;/code&gt;. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.&lt;/p&gt;
+
+&lt;p&gt;Next add a &lt;code&gt;PlaceHolder&lt;/code&gt; to hold the template for obvious reasons. Then create an &lt;code&gt;ITemplate&lt;/code&gt; property. The important thing to note here is that you set the &lt;code&gt;PersistenceMode&lt;/code&gt; (as defined above) so you can easily set it's contents declaratively.&lt;/p&gt;
+
+&lt;p&gt;Also the &lt;code&gt;TemplateInstance.Single&lt;/code&gt; attribute value as it allows you to reference the templated controls directly within the page.&lt;/p&gt;
+
+&lt;p&gt;Finally the real meat of it. In the &lt;code&gt;OnInit&lt;/code&gt; event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.&lt;/p&gt;
+
+&lt;p&gt;The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.&lt;/p&gt;
+
+&lt;p&gt;I have not tested the ViewState of this, but it should all work.&lt;/p&gt;
+
+&lt;p&gt;Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx&lt;/p&gt;
+
+&lt;p&gt;Note2: Ensure the controls are create in Init to access them in Page&lt;em&gt;Load (otherwise they'll be created in Page&lt;/em&gt;PreRender)&lt;/p&gt;
+
+&lt;p&gt;REF: http://www.csharper.net/blog/container&lt;em&gt;user&lt;/em&gt;controls&lt;em&gt;_&lt;/em&gt;user&lt;em&gt;controls&lt;/em&gt;that&lt;em&gt;can&lt;/em&gt;contain&lt;em&gt;other&lt;/em&gt;controls.aspx - Comment by Ego&lt;/p&gt;
+
+&lt;p&gt;also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-asp.net/</id><title type="text">Adding a reusable pop-up box using jQuery and ASP.NET</title><summary type="html">&lt;h1&gt;Adding a reusable pop-up box using jQuery and ASP.NET&lt;/h1&gt;
+
+&lt;p&gt;Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.&lt;/p&gt;
+
+&lt;p&gt;Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.&lt;/p&gt;
+
+&lt;p&gt;Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.&lt;/p&gt;
+
+&lt;p&gt;In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public static void RegisterJQueryRemote(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
+}
+
+public static void RegisterPopup(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.&lt;/p&gt;
+
+&lt;p&gt;Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. &lt;/p&gt;
+
+&lt;p&gt;This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.&lt;/p&gt;
+
+&lt;p&gt;Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;include jQuery and the popup.js
+Personally i call the above methods in the &lt;code&gt;Page_Load&lt;/code&gt; event&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;create a div with a class "popup", and into this place the code for your popup, e.g.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+  &lt;div id="popup" class="help_titles"&gt;
+    &lt;div&gt;
+        &lt;a id="popupClose"&gt;x&lt;/a&gt;
+        &lt;strong&gt;Rejection Reason&lt;/strong&gt;
+    &lt;/div&gt;                       
+    &lt;p&gt;
+        &lt;asp:TextBox ID="txtRejectionReason" runat="server" /&gt;
+        &lt;asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" /&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+
+&lt;p&gt;```  &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;create a div with class "backgroundPopup"
+This just needs to be empty, and will be used to dim the background&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;code&gt;
+      &amp;lt;div id="popupButton"&amp;gt;&amp;lt;a&amp;gt;Reject&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;&lt;br /&gt;
+      &amp;lt;span id="popupButton"&amp;gt;&amp;lt;input type="button" value="Reject"/&amp;gt;&amp;lt;/span&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;And finally add the required styles.      &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;```
+    #backgroundPopup { 
+        display: none;&lt;br /&gt;
+        _position: absolute; /* hack for internet explorer 6&lt;em&gt;/
+        position: fixed;
+        height: 100%;&lt;br /&gt;
+        width: 100%;&lt;br /&gt;
+        top: 0;&lt;br /&gt;
+        left: 0;&lt;br /&gt;
+        background: #000000;&lt;br /&gt;
+        border: 1px solid #cecece;&lt;br /&gt;
+        z-index: 1; 
+    }&lt;br /&gt;
+    #popup {&lt;br /&gt;
+        width: 300px; 
+        margin-top: 5px; 
+        padding-bottom: 5px; 
+        display: none;
+        _position: absolute; /&lt;/em&gt; hack for internet explorer 6*/
+        position: fixed;
+        z-index: 2; 
+        height: 100px;
+    }
+    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
+    #popup p { margin: 5px; }
+    #popupClose { padding-right: 5px; float: right; font-weight: bold; }&lt;br /&gt;
+    #popupClose:hover { cursor: pointer; }
+    #popupButton { width: 100%; margin-top: 5px; }        &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.help_titles
+{
+    border: solid 1px #B5B6B5;
+    background-color: #F7F7F7;
+    font-family: Verdana, Arial;
+    font-size: 11px;
+    color: #1C1F7B;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;```    &lt;/p&gt;
+
+&lt;p&gt;Obviously you do not need all of this, you can remove the formatting. But this should get you started.&lt;/p&gt;
+
+&lt;p&gt;And that's about it really.&lt;/p&gt;
+</summary><published>2008-12-30T13:00:00Z</published><updated>2008-12-30T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-asp.net/" /><content type="html">&lt;h1&gt;Adding a reusable pop-up box using jQuery and ASP.NET&lt;/h1&gt;
+
+&lt;p&gt;Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.&lt;/p&gt;
+
+&lt;p&gt;Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.&lt;/p&gt;
+
+&lt;p&gt;Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.&lt;/p&gt;
+
+&lt;p&gt;In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public static void RegisterJQueryRemote(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
+}
+
+public static void RegisterPopup(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.&lt;/p&gt;
+
+&lt;p&gt;Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. &lt;/p&gt;
+
+&lt;p&gt;This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.&lt;/p&gt;
+
+&lt;p&gt;Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;include jQuery and the popup.js
+Personally i call the above methods in the &lt;code&gt;Page_Load&lt;/code&gt; event&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;create a div with a class "popup", and into this place the code for your popup, e.g.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+  &lt;div id="popup" class="help_titles"&gt;
+    &lt;div&gt;
+        &lt;a id="popupClose"&gt;x&lt;/a&gt;
+        &lt;strong&gt;Rejection Reason&lt;/strong&gt;
+    &lt;/div&gt;                       
+    &lt;p&gt;
+        &lt;asp:TextBox ID="txtRejectionReason" runat="server" /&gt;
+        &lt;asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" /&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+
+&lt;p&gt;```  &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;create a div with class "backgroundPopup"
+This just needs to be empty, and will be used to dim the background&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;code&gt;
+      &amp;lt;div id="popupButton"&amp;gt;&amp;lt;a&amp;gt;Reject&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;&lt;br /&gt;
+      &amp;lt;span id="popupButton"&amp;gt;&amp;lt;input type="button" value="Reject"/&amp;gt;&amp;lt;/span&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;And finally add the required styles.      &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;```
+    #backgroundPopup { 
+        display: none;&lt;br /&gt;
+        _position: absolute; /* hack for internet explorer 6&lt;em&gt;/
+        position: fixed;
+        height: 100%;&lt;br /&gt;
+        width: 100%;&lt;br /&gt;
+        top: 0;&lt;br /&gt;
+        left: 0;&lt;br /&gt;
+        background: #000000;&lt;br /&gt;
+        border: 1px solid #cecece;&lt;br /&gt;
+        z-index: 1; 
+    }&lt;br /&gt;
+    #popup {&lt;br /&gt;
+        width: 300px; 
+        margin-top: 5px; 
+        padding-bottom: 5px; 
+        display: none;
+        _position: absolute; /&lt;/em&gt; hack for internet explorer 6*/
+        position: fixed;
+        z-index: 2; 
+        height: 100px;
+    }
+    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
+    #popup p { margin: 5px; }
+    #popupClose { padding-right: 5px; float: right; font-weight: bold; }&lt;br /&gt;
+    #popupClose:hover { cursor: pointer; }
+    #popupButton { width: 100%; margin-top: 5px; }        &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.help_titles
+{
+    border: solid 1px #B5B6B5;
+    background-color: #F7F7F7;
+    font-family: Verdana, Arial;
+    font-size: 11px;
+    color: #1C1F7B;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;```    &lt;/p&gt;
+
+&lt;p&gt;Obviously you do not need all of this, you can remove the formatting. But this should get you started.&lt;/p&gt;
+
+&lt;p&gt;And that's about it really.&lt;/p&gt;
+</content></entry></feed>

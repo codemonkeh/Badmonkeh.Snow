@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" lang="en-US">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="en-US">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="en-US">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html lang="en-US"><!--<![endif]-->
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="keywords" content=".net,Active Records,ado.net,asp.net,c#,Castle,control,css,design,DesignData,dev,dialog,error1719,error217,exception,h265,javascript,jQuery,lazy loading,mpeg,nant,ORM,partial trust,popup,postback,RichTextBox,silverlight,software,sql,styling,SyntaxHighlighter,tfs,tfs2013,tfsbuild,TinyMCE,tools,video,wix,wix-3.9,wp7,wp8,xaml" />
+    <title>Don't make me think | Ramblings and rants about coding, technology and other stuff…</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="stylesheet" type="text/css" media="all" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/prettify.css" />
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <meta name="robots" content="noindex,follow">
+    <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
+	<link rel="canonical" href="http://www.badmonkeh.com/page2/" />
+</head>
+<body class="home blog custom-background single-author two-column right-sidebar">
+	<div id="page" class="hfeed">
+		<header id="branding" role="banner">
+			<hgroup>
+				<h1 id="site-title"><span><a href="/" title="Don't make me think" rel="home">Don't make me think</a></span></h1>
+				<h2 id="site-description">Ramblings and rants about coding, technology and other stuff…</h2>
+			</hgroup>
+			
+			<nav id="access" role="navigation">
+				<h3 class="assistive-text">Main menu</h3>
+				<div class="skip-link"><a class="assistive-text" href="#content" title="Skip to primary content">Skip to primary content</a></div>
+				<div class="skip-link"><a class="assistive-text" href="#secondary" title="Skip to secondary content">Skip to secondary content</a></div>
+				<div class="menu">
+                    <ul>
+                        <li class="current_page_item"><a href="/">Home</a></li>                        
+                        <li class="page_item page-item-2"><a href="/category">Categories</a></li>
+						<li class="page_item page-item-3"><a href="/tag">Tags</a></li>
+                        <li class="page_item page-item-4"><a href="/archive">Archive</a></li>
+                        
+                        <li class="page_item page-item-6"><a href="/feed.xml">Feed</a></li>
+                    </ul>
+                </div>
+			</nav><!-- #access -->
+		</header><!-- #branding -->
+        <div id="main">
+            <div id="primary" class="site-content">
+                <div id="content" role="main">
+                  
+  <div class="posts">
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/12/04/css-minimum-height/">CSS Minimum height</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>04 Dec 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>CSS Minimum height</h1>
+
+<p>I have come to love using a CSS design over ugly, change resistant tables. However the eternal annoyance is getting the design to work correctly with Internet Explorer as well as lovely standards compliant browsers.</p>
+
+<p>One main issue i have is getting a div to have a minimum height specified for all browsers so it doesn't squash up when there is no content. Here is a nice way to do it:</p>
+
+<pre><code>#main {
+  height: auto !important; /* IE6 ignores */
+  height: 500px; /* IE6 uses this as specified later */
+  min-height: 500px;
+}
+</code></pre>
+
+<p>The first line is for Firefox, the middle for IE6 and the last for IE7. Works like a charm :)</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					css, styling
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/11/05/executing-batches-of-sql-statements-using-ado.net/">Executing batches of SQL statements using ADO.NET</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>05 Nov 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Executing batches of SQL statements using ADO.NET</h1>
+
+<p>I was writing an auditing tool recently that generated scripts to create triggers. Of course i wanted to guarantee that these scripts did not fail so i did the right thing and first checked if the trigger existed, and dropped it if it did.</p>
+
+<p>Now i wrote these scripts originally in SQL Server Management Studio of course, and used the GO statement to separate them into batches. If you don't do this you will get a horrible error message informing you that CREATE statements must be the first line in a batch.</p>
+
+<p>For more information about batches see: http://www.teratrax.com/tsg/help/queries.html</p>
+
+<p>Now when i went to execute this scripts on the fly, lo and behold i came upon a familiar error message: '<code>CREATE TRIGGER</code>' must be the first statement in a query batch.</p>
+
+<p>It turns out for some perverse reason ADO.NET interprets the SQL you give it as a single batch, in fact it must go as far as to strip or ignore all <code>GO</code> statements within it. Logically a <code>Command</code> would appear to be singular, but regardless you would hope that it would execute the SQL as written.</p>
+
+<p>So having this in mind there is a very simple solution. The below code splits the SQL into separate batches for singular execution:</p>
+
+<pre><code>string sql = "... your sql ...";
+Regex regex = new Regex("^GO", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+string[] batches = regex.Split(sql);
+</code></pre>
+
+<p>Then of course to execute them you just need to loop through each, and execute it as a separate command.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					ado.net, sql
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/10/01/integrating-syntaxhighlighter-with-tinymce/">Integrating SyntaxHighlighter with TinyMCE</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>01 Oct 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Integrating SyntaxHighlighter with TinyMCE</h1>
+
+<p>SyntaxHighlighter is a fantastic set of js libraries that allow you ... <INSERT BLURB></p>
+
+<p>This article assumes that you have already installed TinyMCE (perhaps add part about installing and configuring TinyMCE??)</p>
+
+<ol>
+<li><p>Download SyntaxHighlighter <INSERT LINK></p></li>
+<li><p>Install</p>
+
+<ul>
+<li>i just copied the css file into my theme, and the js files into a folder under my scripts dir (~/jscripts/SyntaxHighlighter)</li>
+</ul></li>
+<li><p>Download Nawaf's codehighlighter plugin from here (http://weblogs.asp.net/nawaf/archive/2008/04/10/syntaxhighlighter-plug-in-for-tinymce-3-x-wysiwyg-editor.aspx)
+Just scroll down to the bottom of the page, where it lists attachment <perhaps link to better download></p></li>
+<li><p>Extract this into TinyMCE's plugin directory</p></li>
+<li><p>Now the next step is to modify your TinyMCE configuration to include the following:
+plugins: 'codehighlighting',
+extended<em>valid</em>elements: 'textarea[name|class|cols|rows]',
+remove<em>linebreaks : false,
+theme</em>advanced<em>buttons3</em>add : 'codehighlighting'</p>
+
+<p>Where you place the button, as defined on the last line above is up to you consult the <INSERT LINK> wiki for more info.</p></li>
+<li><p>Now all is left to do is to load syntax highlighter on the page you intend to use it. Of course you could manually code this into the page
+but as i would generally use this within a control i created a class to insert the correct javascript. Now all you have to do is call the
+static methods in the Page_Load of your control.</p></li>
+</ol>
+
+<p>public class ClientScriptHelper
+{
+    public static void RegisterSyntaxHighlighter(Page page)
+    {
+        page.ClientScript.RegisterClientScriptInclude("shCore", 
+            page.ResolveClientUrl("~/jscripts/SyntaxHighlighter/shCore.js"));
+        page.ClientScript.RegisterClientScriptInclude("shBrushCSharp", 
+            page.ResolveClientUrl("~/jscripts/SyntaxHighlighter/shBrushCSharp.js"));
+        page.ClientScript.RegisterClientScriptInclude("shBrushXml", 
+            page.ResolveClientUrl("~/jscripts/SyntaxHighlighter/shBrushXml.js"));</p>
+
+<pre><code>    string clipboardPath = page.ResolveClientUrl("~/jscripts/SyntaxHighlighter/clipboard.swf");
+    page.ClientScript.RegisterStartupScript(typeof(ClientScriptHelper), "SyntaxHighlighterInit", @"
+        &lt;script language='javascript'&gt;
+            dp.SyntaxHighlighter.ClipboardSwf = '" + clipboardPath + @"';
+            dp.SyntaxHighlighter.HighlightAll('code');
+        &lt;/script&gt;   
+    ");
+}
+
+public static void RegisterTinyMCEFull(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("TinyMCE", 
+        page.ResolveClientUrl("~/jscripts/tiny_mce/tiny_mce.js"));
+    page.ClientScript.RegisterClientScriptBlock(typeof(ClientScriptHelper), "TinyMCEInit", @"
+        &lt;script type='text/javascript'&gt;
+            tinyMCE.init({
+                mode: 'textareas',
+                theme: 'advanced',
+                fix_list_elements: true,
+                plugins: 'emotions,codehighlighting',
+                theme_advanced_buttons3_add: 'emotions, codehighlighting',
+                extended_valid_elements: 'textarea[name|class|cols|rows]',          
+                remove_linebreaks : false
+            });
+        &lt;/script&gt;
+    ");
+}
+</code></pre>
+
+<p>}    </p>
+
+<pre><code>Please note above that the initialisation for the SyntaxHighligter is done after the page has loaded. If you are
+going to enter this manually, put that block *at the bottom of the page* or it might not work correctly.
+
+The benefits of doing it this way are:
+    1. I only have to type it in one place and can reuse it in many
+    2. I can dynamically load the libraries (which do take a little while) based upon my own parameters
+    3. I can customise the layout based upon my own parameters
+    4. They are all registered with the same type, so multiple controls on one page can call this and still have it register only once
+    5. I don't have to worry about initalising the SyntaxHightlighter in the right place
+</code></pre>
+
+<p>And that should be all you really need to know</p>
+
+<h2>References:</h2>
+
+<p>http://weblogs.asp.net/nawaf/archive/2008/04/10/syntaxhighlighter-plug-in-for-tinymce-3-x-wysiwyg-editor.aspx
+http://weblogs.asp.net/nawaf/archive/2008/04/06/syntaxhighlighter-plugin-for-tinymce-wysiwyg-editor.aspx</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					SyntaxHighlighter, TinyMCE
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/09/25/active-records-partial-trust/">Compiling Castle Active Records for a Partial Trust Environment</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>25 Sep 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Compiling Castle Active Records for a Partial Trust Environment</h1>
+
+<p>Castle Active Record's is a brilliant object relational data-mapper that sits on top of nHibernate. Essentially this allows me to abstract the majority of my database calls away but creating a set of classes with a few additional properties attached to them.</p>
+
+<p>I am currently using this system at work in several projects and personally i love it. It allows me to quickly reflect changes in the database, and the about 95% of all queries i can now write in code against objects.</p>
+
+<h2>How to compile for partial trust</h2>
+
+<p>Checked out the latest source from SVN
+Installed the latest version of nant 0.86b1
+Put the nant bin directory in my path
+Ran the following statement</p>
+
+<pre><code>nant -D:common.testrunner.enabled=false -D:assembly.allow-partially-trusted-callers=true
+</code></pre>
+
+<p>It built successfully (for .net 3.5) with 2 non-fatal errors. Recommends a later version of nant (the nightly build)
+Downloaded the latest nightly build (2008-08-18)
+Recompiled using this nant with the same parameters
+Built again with 2 non-fatal errors
+And voila you should be done with your files in the "build" directory    </p>
+
+<p>It's important to note that you can create the assemblies as unsigned (by specifying -D:sign=false) but this will cause you issues if you wish to enable lazy loading later on       </p>
+
+<pre><code>D:\Dev\Tools\nant-0.86-nightly-2008-08-18\bin\nant -D:common.testrunner.enabled=false -D:assembly.allow-partially-trusted-callers=true
+</code></pre>
+
+<h2>Links:</h2>
+
+<ul>
+<li>http://forum.castleproject.org/viewtopic.php?t=1439</li>
+<li>http://forum.castleproject.org/viewtopic.php?t=4659&amp;sid=9a6619df040193fb021198a62f899cfd</li>
+<li>http://vhendriks.wordpress.com/2007/11/21/monorail-on-shared-hosting/</li>
+</ul>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					.net, Active Records, c#, Castle, nant, ORM
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/09/25/enabling-lazy-loading-for-active-records-under-partial-trust/">Enabling Lazy Loading for Active Records under Partial Trust</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>25 Sep 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<p>Lazy loading is one of the great features of nHibernate and is one that i could not do without. The problem is that like with most good things they don't work inheritanly on a medium trust web host.
+The problem is that lazy loading relies on creating proxy classes for your records, at runtime. However you can using a nifty little tool generate your own proxy classes such that Active Records (nHibernate) does not have to generate them for you.</p>
+
+<ol>
+<li><p>Download the source for the nHibernateProxyGenerator from http://blechie.com/WPierce/archive/2008/02/17/Lazy-Loading-with-nHibernate-Under-Medium-Trust.aspx</p></li>
+<li><p>Copy across your recently compiled libraries for Active Records into the lib dir. Make sure that you have signed them or this will not work.</p></li>
+<li><p>Build it. Depending on what version of source you got you may have to change the code a little to get it to compile. I had to update the config so it used a generic dictionary, but that was all.</p></li>
+<li><p>Now as you are going to have to regenerate the proxies every time your change your model i would recommend that you copy the build dir of this program into a folder inside your libraries folder.</p></li>
+<li><p>Create a build step to autmomatically generate the proxies for your Model project. Something like this:
+"$(SolutionDir)libs\NHibernateProxyGenerator\NPG.exe" /in:"$(TargetDir)BadMonkeh.DAO.dll" /out:"$(SolutionDir)libs\BadMonkeh.DAO.Proxies.dll"</p>
+
+<p>Obviously this step assumes you places NPG in a folder structure libs\NHibernateProxyGenerator off your builds dir, and that your assembly is called BadMonkeh.DAO.dll.</p></li>
+<li><p>Then add the following line to your configuration inside the activerecord section, substituting the name of your proxy library:
+<add key="proxyfactory.factory_class" value="StaticProxyFactoryFactory, BadMonkeh.DAO.Proxies" /></p></li>
+<li><p>And finally add a reference to the proxy library in your web.config.</p></li>
+</ol>
+
+<h3>References:</h3>
+
+<ul>
+<li>http://blechie.com/WPierce/archive/2008/02/17/Lazy-Loading-with-nHibernate-Under-Medium-Trust.aspx</li>
+<li>http://www.nhforge.org/wikis/howtonh/pre-generate-lazy-loading-proxies.aspx</li>
+</ul>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					.net, Active Records, c#, Castle, lazy loading, orm
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/09/25/implementing-active-records-in-a-partial-trust-enviornment/">Implementing Active Records in a Partial Trust Environment</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>25 Sep 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Implementing Active Records in a Partial Trust Environment</h1>
+
+<p>a) Create a new project for the Model (a.k.a Data Access Layer)</p>
+
+<p>b) Presuming you already have an existing database the next step is to generate classes for all of your strong entities.
+   This can be done using the fantastic tool available here: http://www.bryanchen.com/2007/07/18/caragen-tool-the-castle-active-record-autonomous-generator-tool/
+   One thing to note about this tool is that is will not generate relationships between entities so you'll have to do that yourself. If you are unsure the on how to do this the manual is a great help.
+   Also you might want to update the templates first to fit your coding style, and fix up any areas in the resulting classes afterwards</p>
+
+<p>c) The next step is to create the connection source for your database. It is better practice to do this in an xml file but you can do it in code of you prefer.</p>
+
+<p>First add the following line inside your webconfig, in the configSections:</p>
+
+<pre><code>&lt;section name="activerecord" requirePermission="false" type="Castle.ActiveRecord.Framework.Config.ActiveRecordSectionHandler, Castle.ActiveRecord"/&gt;
+</code></pre>
+
+<p>Then add a new section as below:</p>
+
+<pre><code>&lt;activerecord isWeb="true"&gt;
+    &lt;config&gt;
+        &lt;add key="connection.driver_class" value="NHibernate.Driver.SqlClientDriver" /&gt;
+        &lt;add key="dialect" value="NHibernate.Dialect.MsSql2005Dialect" /&gt;
+        &lt;add key="connection.provider" value="NHibernate.Connection.DriverConnectionProvider" /&gt;
+        &lt;add key="connection.connection_string_name" value="badmonkeh" /&gt;            
+    &lt;/config&gt;
+&lt;/activerecord&gt;
+</code></pre>
+
+<p>In this case i am referring to a MSSQL 2005 database with a predefined connection string with the name badmonkeh.</p>
+
+<p>d) Then we need a class to initialise your database connection.
+   This class basically has to tweak a couple of settings initialise all of the our record types. An elegant solution would be to use reflection for this, but unfortunately my host does not trust me enough for that. Below is an example class.</p>
+
+<p><code>
+    public class ActiveRecordsInitialiser
+    {
+        public static void InitaliseSession()
+        {
+            IConfigurationSource config = ActiveRecordSectionHandler.Instance;
+            ActiveRecordStarter.Initialize(config, GetAllActiveRecordTypes());
+            NHibernate.Cfg.Environment.UseReflectionOptimizer = false;
+        }<br />
+        private static Type[] GetAllActiveRecordTypes()
+        {
+            List&lt;Type&gt; types = new List&lt;Type&gt;();<br />
+            //TODO: Manually add types here 
+            return types.ToArray();
+        }
+    }
+</code>    </p>
+
+<p>d) The next step is to ensure that the model is initialised every time the domain is loaded. Open up your global.asax file, or create a new "Global Application Class" if you do not have one.
+   In the Appllication_Start event insert the following code:</p>
+
+<pre><code>`YourNameSpace.ActiveRecordsInitialiser.InitaliseSession();`
+</code></pre>
+
+<p>Obviously replacing the namespace with your own.</p>
+
+<p>e) To get this to run you will need to add a reference to the following libraries (that are included with active records) to your web.config:</p>
+
+<p><code>Iesi.Collections.dll, log4net.dll, Castle.Components.Validator.dll</code></p>
+
+<p>f) Enable lazy loading in a partial trust environment is the final (optional) step. Personally lazy loading is a huge benefit so i can't do without it. However i will leave this for a post of it's own :)</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					.net, Active Records, c#, Castle, lazy loading, orm, partial trust
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+  </div> 
+
+  <!-- Pagination links -->
+  <div id="post-pagination" class="pagination">
+
+   
+      <p class="previous">
+        <a href="/">Previous Page</a>
+      </p>
+
+
+
+  </div>
+
+
+                </div>
+                <!-- #content -->
+            </div>
+            <!-- #primary .site-content -->
+			
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="text-2" class="widget widget_text">
+                    <h3 class="widget-title">About me</h3>
+                    <div class="textwidget">
+                        <a href="/about"><img src="/images/profile/me.jpg" border="0"></a>
+                        <p>Hi, i'm Christian Froehlich.</p>
+                        <p>
+                            I'm a passionate .NET Software Developer with over 10 years of experience in building web application and solving complex problems.
+                        </p>
+                        <p>I'm also interested in photography, 3D printing, beer and coffee. Check me out ;)</p>
+                    </div>
+                </aside>
+                <aside id="text-3" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="https://stackoverflow.com/users/73027/codemonkeh">
+                            <img src="https://stackoverflow.com/users/flair/73027.png" width="208" height="58" alt="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for codemonkeh at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+                        </a>
+                    </div>
+                </aside>
+                <aside id="text-4" class="widget widget_text">
+                    <div class="textwidget">
+                        <a href="/rss.xml" title="RSS 2.0 Feed"><img src="/images/rss-2x.png" alt="Subscribe via RSS" align="middle" height="46" width="46"><span style="padding-left: 5px;">Subscribe via RSS</span></a><br>
+                    </div>
+                </aside>
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h3 class="widget-title">Recent Posts</h3>
+                    <ul>
+                            <li><a href="/2018/03/14/converting-mpeg-to-h.265/">Converting MPEG to H.265</a></li>
+                            <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
+                            <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
+                            <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
+                            <li><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></li>
+                    </ul>
+                </aside>
+                <!--aside id="recent-comments-2" class="widget widget_recent_comments"><h3 class="widget-title">Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://danrigby.com/2013/02/13/windows-store-developer-links-2013-02-14/" rel="external nofollow" class="url">Windows Store Developer Links – 2013-02-14 | Dan Rigby</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-3">DesignData makes your life easier</a></li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.silverlightshow.net/news/Windows-Phone-DesignData-makes-your-life-easier.aspx" rel="external nofollow" class="url">[Windows Phone] DesignData makes your life easier</a></span> on <a href="http://localhost/WordPress/blog/2013/02/12/designdata-makes-your-life-easier/#comment-2">DesignData makes your life easier</a></li></ul>
+    </aside-->
+                <!--aside id="quick-flickr-widget-3" class="widget widget_quick-flickr-widget"><h3 class="widget-title">Flickr</h3>SSL is required</aside-->
+                <!--aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+                        <li><a href="http://localhost/WordPress/blog/2015/07/">July 2015</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2013/02/">February 2013</a></li>
+                        <li><a href="http://localhost/WordPress/blog/2012/11/">November 2012</a></li>
+                            </ul>
+    </aside-->
+                <aside id="categories-2" class="widget widget_categories">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul>
+                <li class="cat-item"><a href="/category/photography" title="Snow.Models.Category" rel="tag">Photography</a></li>
+                <li class="cat-item"><a href="/category/software-development" title="Snow.Models.Category" rel="tag">Software Development</a></li>
+                    </ul>
+                </aside>
+                <aside id="tags-2" class="widget widget_tags">
+                    <h3 class="widget-title">Tags</h3>
+                    <ul>
+                <li class="cat-item"><a href="/tag/.net" title="Snow.Models.Tag" rel="tag">.net</a></li>
+                <li class="cat-item"><a href="/tag/active-records" title="Snow.Models.Tag" rel="tag">Active Records</a></li>
+                <li class="cat-item"><a href="/tag/ado.net" title="Snow.Models.Tag" rel="tag">ado.net</a></li>
+                <li class="cat-item"><a href="/tag/asp.net" title="Snow.Models.Tag" rel="tag">asp.net</a></li>
+                <li class="cat-item"><a href="/tag/c" title="Snow.Models.Tag" rel="tag">c#</a></li>
+                <li class="cat-item"><a href="/tag/castle" title="Snow.Models.Tag" rel="tag">Castle</a></li>
+                <li class="cat-item"><a href="/tag/control" title="Snow.Models.Tag" rel="tag">control</a></li>
+                <li class="cat-item"><a href="/tag/css" title="Snow.Models.Tag" rel="tag">css</a></li>
+                <li class="cat-item"><a href="/tag/design" title="Snow.Models.Tag" rel="tag">design</a></li>
+                <li class="cat-item"><a href="/tag/designdata" title="Snow.Models.Tag" rel="tag">DesignData</a></li>
+                <li class="cat-item"><a href="/tag/dev" title="Snow.Models.Tag" rel="tag">dev</a></li>
+                <li class="cat-item"><a href="/tag/dialog" title="Snow.Models.Tag" rel="tag">dialog</a></li>
+                <li class="cat-item"><a href="/tag/error1719" title="Snow.Models.Tag" rel="tag">error1719</a></li>
+                <li class="cat-item"><a href="/tag/error217" title="Snow.Models.Tag" rel="tag">error217</a></li>
+                <li class="cat-item"><a href="/tag/exception" title="Snow.Models.Tag" rel="tag">exception</a></li>
+                <li class="cat-item"><a href="/tag/h265" title="Snow.Models.Tag" rel="tag">h265</a></li>
+                <li class="cat-item"><a href="/tag/javascript" title="Snow.Models.Tag" rel="tag">javascript</a></li>
+                <li class="cat-item"><a href="/tag/jquery" title="Snow.Models.Tag" rel="tag">jQuery</a></li>
+                <li class="cat-item"><a href="/tag/lazy-loading" title="Snow.Models.Tag" rel="tag">lazy loading</a></li>
+                <li class="cat-item"><a href="/tag/mpeg" title="Snow.Models.Tag" rel="tag">mpeg</a></li>
+                <li class="cat-item"><a href="/tag/nant" title="Snow.Models.Tag" rel="tag">nant</a></li>
+                <li class="cat-item"><a href="/tag/orm" title="Snow.Models.Tag" rel="tag">ORM</a></li>
+                <li class="cat-item"><a href="/tag/partial-trust" title="Snow.Models.Tag" rel="tag">partial trust</a></li>
+                <li class="cat-item"><a href="/tag/popup" title="Snow.Models.Tag" rel="tag">popup</a></li>
+                <li class="cat-item"><a href="/tag/postback" title="Snow.Models.Tag" rel="tag">postback</a></li>
+                <li class="cat-item"><a href="/tag/richtextbox" title="Snow.Models.Tag" rel="tag">RichTextBox</a></li>
+                <li class="cat-item"><a href="/tag/silverlight" title="Snow.Models.Tag" rel="tag">silverlight</a></li>
+                <li class="cat-item"><a href="/tag/software" title="Snow.Models.Tag" rel="tag">software</a></li>
+                <li class="cat-item"><a href="/tag/sql" title="Snow.Models.Tag" rel="tag">sql</a></li>
+                <li class="cat-item"><a href="/tag/styling" title="Snow.Models.Tag" rel="tag">styling</a></li>
+                <li class="cat-item"><a href="/tag/syntaxhighlighter" title="Snow.Models.Tag" rel="tag">SyntaxHighlighter</a></li>
+                <li class="cat-item"><a href="/tag/tfs" title="Snow.Models.Tag" rel="tag">tfs</a></li>
+                <li class="cat-item"><a href="/tag/tfs2013" title="Snow.Models.Tag" rel="tag">tfs2013</a></li>
+                <li class="cat-item"><a href="/tag/tfsbuild" title="Snow.Models.Tag" rel="tag">tfsbuild</a></li>
+                <li class="cat-item"><a href="/tag/tinymce" title="Snow.Models.Tag" rel="tag">TinyMCE</a></li>
+                <li class="cat-item"><a href="/tag/tools" title="Snow.Models.Tag" rel="tag">tools</a></li>
+                <li class="cat-item"><a href="/tag/video" title="Snow.Models.Tag" rel="tag">video</a></li>
+                <li class="cat-item"><a href="/tag/wix" title="Snow.Models.Tag" rel="tag">wix</a></li>
+                <li class="cat-item"><a href="/tag/wix-3.9" title="Snow.Models.Tag" rel="tag">wix-3.9</a></li>
+                <li class="cat-item"><a href="/tag/wp7" title="Snow.Models.Tag" rel="tag">wp7</a></li>
+                <li class="cat-item"><a href="/tag/wp8" title="Snow.Models.Tag" rel="tag">wp8</a></li>
+                <li class="cat-item"><a href="/tag/xaml" title="Snow.Models.Tag" rel="tag">xaml</a></li>
+                    </ul>
+                </aside>
+            </div><!-- #secondary .widget-area -->
+
+        </div>
+        <!-- #main -->
+
+		<footer id="colophon" role="contentinfo">
+			<div>
+			Powered by <a href="https://github.com/codemonkeh/Sandra.Snow" rel="generator">Sandra.Snow</a>. Copyright © 2018 Christian Froehlich. All rights reserved. 
+			</div>
+		</footer><!-- #colophon -->		
+    </div>
+	
+    <!-- #page .hfeed .site -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src='/js/prettify.js' type='text/javascript'></script>
+    
+    <script type="text/javascript">
+var _gaq = _gaq || [];
+
+_gaq.push(['_setAccount', 'UA-68156920-1']);
+_gaq.push(['_trackPageview']);
+        
+(function () {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    
+    <script type='text/javascript'>
+      $(function () {
+        $("pre code").parent().each(function () {
+          if (!$(this).hasClass("prettyprint")) {
+            $(this).addClass("prettyprint");
+            a = true
+          }
+        });
+
+        prettyPrint();
+      });
+    </script>
+</body>
+</html>
