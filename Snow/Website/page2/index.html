@@ -59,6 +59,142 @@
   <div class="posts">
 	<article class="post type-post status-publish format-standard hentry">
 		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-aspnet/">Adding a reusable pop-up box using jQuery and ASP.NET</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>31 Dec 2008
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Adding a reusable pop-up box using jQuery and ASP.NET</h1>
+
+<p>Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.</p>
+
+<p>Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.</p>
+
+<p>Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.</p>
+
+<p>In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:</p>
+
+<pre><code>public static void RegisterJQueryRemote(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
+}
+
+public static void RegisterPopup(Page page)
+{
+    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
+}
+</code></pre>
+
+<p>These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.</p>
+
+<p>Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. </p>
+
+<p>This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.</p>
+
+<p>Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:</p>
+
+<ol>
+<li><p>include jQuery and the popup.js
+Personally i call the above methods in the <code>Page_Load</code> event</p></li>
+<li><p>create a div with a class "popup", and into this place the code for your popup, e.g.</p></li>
+</ol>
+
+<p>```</p>
+
+  <div id="popup" class="help_titles">
+    <div>
+        <a id="popupClose">x</a>
+        <strong>Rejection Reason</strong>
+    </div>                       
+    <p>
+        <asp:TextBox ID="txtRejectionReason" runat="server" />
+        <asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" />
+    </p>
+  </div>
+
+<p>```  </p>
+
+<ol>
+<li><p>create a div with class "backgroundPopup"
+This just needs to be empty, and will be used to dim the background</p></li>
+<li><p>Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.</p></li>
+</ol>
+
+<p><code>
+      &lt;div id="popupButton"&gt;&lt;a&gt;Reject&lt;/a&gt;&lt;/div&gt;<br />
+      &lt;span id="popupButton"&gt;&lt;input type="button" value="Reject"/&gt;&lt;/span&gt;
+</code></p>
+
+<ol>
+<li>And finally add the required styles.      </li>
+</ol>
+
+<p>```
+    #backgroundPopup { 
+        display: none;<br />
+        _position: absolute; /* hack for internet explorer 6<em>/
+        position: fixed;
+        height: 100%;<br />
+        width: 100%;<br />
+        top: 0;<br />
+        left: 0;<br />
+        background: #000000;<br />
+        border: 1px solid #cecece;<br />
+        z-index: 1; 
+    }<br />
+    #popup {<br />
+        width: 300px; 
+        margin-top: 5px; 
+        padding-bottom: 5px; 
+        display: none;
+        _position: absolute; /</em> hack for internet explorer 6*/
+        position: fixed;
+        z-index: 2; 
+        height: 100px;
+    }
+    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
+    #popup p { margin: 5px; }
+    #popupClose { padding-right: 5px; float: right; font-weight: bold; }<br />
+    #popupClose:hover { cursor: pointer; }
+    #popupButton { width: 100%; margin-top: 5px; }        </p>
+
+<pre><code>.help_titles
+{
+    border: solid 1px #B5B6B5;
+    background-color: #F7F7F7;
+    font-family: Verdana, Arial;
+    font-size: 11px;
+    color: #1C1F7B;
+}
+</code></pre>
+
+<p>```    </p>
+
+<p>Obviously you do not need all of this, you can remove the formatting. But this should get you started.</p>
+
+<p>And that's about it really.</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					asp.net, dialog, javascript, jQuery, popup
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
 			<h1 class="entry-title"><a href="/2008/12/04/css-minimum-height/">CSS Minimum height</a></h1>
 
 			<div class="entry-meta">
@@ -100,7 +236,7 @@
 	</article>
 	<article class="post type-post status-publish format-standard hentry">
 		<header class="entry-header">
-			<h1 class="entry-title"><a href="/2008/11/05/executing-batches-of-sql-statements-using-ado.net/">Executing batches of SQL statements using ADO.NET</a></h1>
+			<h1 class="entry-title"><a href="/2008/11/05/executing-batches-of-sql-statements-using-adonet/">Executing batches of SQL statements using ADO.NET</a></h1>
 
 			<div class="entry-meta">
 				<span class="sep">Posted on </span>05 Nov 2008
@@ -515,11 +651,11 @@ The problem is that lazy loading relies on creating proxy classes for your recor
                 <aside id="recent-posts-2" class="widget widget_recent_entries">
                     <h3 class="widget-title">Recent Posts</h3>
                     <ul>
+                            <li><a href="/2018/03/26/capturing-a-screenshot-of-an-html-element/">Capturing a screenshot of an HTML element</a></li>
                             <li><a href="/2018/03/14/converting-mpeg-to-h265/">Converting MPEG to H.265</a></li>
                             <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
                             <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
                             <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
-                            <li><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></li>
                     </ul>
                 </aside>
             </div><!-- #secondary .widget-area -->

@@ -26,7 +26,7 @@
     <![endif]-->
     <meta name="robots" content="noindex,follow">
     <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
-    <link rel="canonical" href="http://www.badmonkeh.com/tag/video/" />
+    <link rel="canonical" href="http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-adonet/" />
 </head>
 <body class="home blog custom-background single-author two-column right-sidebar">
 	<div id="page" class="hfeed">
@@ -57,19 +57,84 @@
                 <div id="content" role="main">
                   
 
-  <header>
-  <div class="head-inner">
-    <h1><a href="/tag/">Tags</a> - video</h1>
-  </div>
-  </header>
+<article class="post type-post status-publish format-standard hentry">
+    <header class="entry-header">
+        <h1 class="entry-title">Executing batches of SQL statements using ADO.NET</h1>
 
-  <ul class="tag-list">
-      <li>
-        <a href="/2018/03/14/converting-mpeg-to-h265/" title="Converting MPEG to H.265">Converting MPEG to H.265</a> 
-        <small>(14 Mar 2018)</small>
-      </li>
-  </ul>
-  
+        <div class="entry-meta">
+            <span class="sep">Posted on </span>05 Nov 2008
+        </div><!-- .entry-meta -->
+    </header><!-- .entry-header -->
+
+    <div class="entry-content">
+        
+
+        <h1>Executing batches of SQL statements using ADO.NET</h1>
+
+<p>I was writing an auditing tool recently that generated scripts to create triggers. Of course i wanted to guarantee that these scripts did not fail so i did the right thing and first checked if the trigger existed, and dropped it if it did.</p>
+
+<p>Now i wrote these scripts originally in SQL Server Management Studio of course, and used the GO statement to separate them into batches. If you don't do this you will get a horrible error message informing you that CREATE statements must be the first line in a batch.</p>
+
+<p>For more information about batches see: http://www.teratrax.com/tsg/help/queries.html</p>
+
+<p>Now when i went to execute this scripts on the fly, lo and behold i came upon a familiar error message: '<code>CREATE TRIGGER</code>' must be the first statement in a query batch.</p>
+
+<p>It turns out for some perverse reason ADO.NET interprets the SQL you give it as a single batch, in fact it must go as far as to strip or ignore all <code>GO</code> statements within it. Logically a <code>Command</code> would appear to be singular, but regardless you would hope that it would execute the SQL as written.</p>
+
+<p>So having this in mind there is a very simple solution. The below code splits the SQL into separate batches for singular execution:</p>
+
+<pre><code>string sql = "... your sql ...";
+Regex regex = new Regex("^GO", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+string[] batches = regex.Split(sql);
+</code></pre>
+
+<p>Then of course to execute them you just need to loop through each, and execute it as a separate command.</p>
+
+    </div><!-- .entry-content -->   
+    
+    <footer class="entry-meta">
+        <span class="cat-links">
+		<span class="entry-utility-prep entry-utility-prep-cat-links">Posted in</span>
+				<a href="/category/software-development" title="Snow.Models.Category" rel="category tag">Software Development</a>,
+        </span>
+        <span class="sep"> | </span>
+        <span class="tag-links">
+            <span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					<a href="/tag/ado.net" title="Snow.Models.Tag" rel="tag">ado.net</a>,
+					<a href="/tag/sql" title="Snow.Models.Tag" rel="tag">sql</a>,
+        </span>
+
+        
+
+		<div id="disqus_thread"></div>
+<script>
+    var reset_disqus = function(){
+        DISQUS.reset({
+            reload: true,
+            config: function () {
+                //this.page.identifier = '';
+                this.page.url = 'http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-adonet/';
+                //this.page.title = '';
+            }
+        });
+    };
+
+    var disqus_shortname = 'badmonkehblog';
+    var disqus_url = 'http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-adonet/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    window.addEventListener('orientationchange', reset_disqus);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer><!-- .entry-meta -->
+	
+</article>
 
                 </div>
                 <!-- #content -->

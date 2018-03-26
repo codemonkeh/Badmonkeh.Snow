@@ -1,4 +1,64 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Don't make me think! - badmonkeh.com</title><subtitle type="text">Don't make me think! - badmonkeh.com</subtitle><id>http://www.badmonkeh.com/</id><updated>2018-03-14T23:23:39+11:00</updated><author><name>Christian Froehlich</name><uri>http://www.badmonkeh.com</uri></author><generator>Sandra.Snow Atom Generator</generator><link rel="alternate" href="http://www.badmonkeh.com/feed.xml" /><link rel="self" type="text/html" title="Don't make me think! - badmonkeh.com" href="http://www.badmonkeh.com/feed.xml" /><entry><id>http://www.badmonkeh.com/2018/03/14/converting-mpeg-to-h265/</id><title type="text">Converting MPEG to H.265</title><summary type="html">&lt;h1&gt;Converting MPEG to H.265&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Don't make me think! - badmonkeh.com</title><subtitle type="text">Don't make me think! - badmonkeh.com</subtitle><id>http://www.badmonkeh.com/</id><updated>2018-03-26T12:10:51+11:00</updated><author><name>Christian Froehlich</name><uri>http://www.badmonkeh.com</uri></author><generator>Sandra.Snow Atom Generator</generator><link rel="alternate" href="http://www.badmonkeh.com/feed.xml" /><link rel="self" type="text/html" title="Don't make me think! - badmonkeh.com" href="http://www.badmonkeh.com/feed.xml" /><entry><id>http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/</id><title type="text">Capturing a screenshot of an HTML element</title><summary type="html">&lt;h1&gt;Capturing a screenshot of an HTML element&lt;/h1&gt;
+
+&lt;p&gt;Ever come across a website you want screenshot but the content spans two pages? Or perhaps you don't want to go through the hassle of editing and cropping the screenshot to isolate the small piece of content on the page that is useful. Well look no further, here is a simple tip on how to capture the content of a specific element only.&lt;/p&gt;
+
+&lt;h2&gt;Firefox&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Right click the element on the page and choose Inspect Element (Q)&lt;/li&gt;
+&lt;li&gt;Hover over the tree of elements and ensure that all of the content you want is masked&lt;/li&gt;
+&lt;li&gt;Right-click the element and choose Screenshot Node&lt;/li&gt;
+&lt;li&gt;Check your downloads folder for the saved image.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a href="https://hacks.mozilla.org/2015/09/trainspotting-firefox-41"&gt;Reference&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Chrome&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Right click the element on the page and choose Inspect&lt;/li&gt;
+&lt;li&gt;Hover over the tree of elements and ensure that all of the content you want is masked&lt;/li&gt;
+&lt;li&gt;Open the command menu by typing &lt;code&gt;Ctrl+Shift+P&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Type in &lt;code&gt;Node&lt;/code&gt; and select the &lt;code&gt;Capture node screenshot&lt;/code&gt; command&lt;/li&gt;
+&lt;li&gt;Check your downloads folder for the saved image.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a href="https://developers.google.com/web/updates/2017/08/devtools-release-notes#node-screenshots"&gt;Reference&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This has been useful to me, i hope it is to you too. If you have any other tips hit me up in the comments. &lt;/p&gt;
+</summary><published>2018-03-25T13:00:00Z</published><updated>2018-03-25T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/" /><content type="html">&lt;h1&gt;Capturing a screenshot of an HTML element&lt;/h1&gt;
+
+&lt;p&gt;Ever come across a website you want screenshot but the content spans two pages? Or perhaps you don't want to go through the hassle of editing and cropping the screenshot to isolate the small piece of content on the page that is useful. Well look no further, here is a simple tip on how to capture the content of a specific element only.&lt;/p&gt;
+
+&lt;h2&gt;Firefox&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Right click the element on the page and choose Inspect Element (Q)&lt;/li&gt;
+&lt;li&gt;Hover over the tree of elements and ensure that all of the content you want is masked&lt;/li&gt;
+&lt;li&gt;Right-click the element and choose Screenshot Node&lt;/li&gt;
+&lt;li&gt;Check your downloads folder for the saved image.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a href="https://hacks.mozilla.org/2015/09/trainspotting-firefox-41"&gt;Reference&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Chrome&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Right click the element on the page and choose Inspect&lt;/li&gt;
+&lt;li&gt;Hover over the tree of elements and ensure that all of the content you want is masked&lt;/li&gt;
+&lt;li&gt;Open the command menu by typing &lt;code&gt;Ctrl+Shift+P&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Type in &lt;code&gt;Node&lt;/code&gt; and select the &lt;code&gt;Capture node screenshot&lt;/code&gt; command&lt;/li&gt;
+&lt;li&gt;Check your downloads folder for the saved image.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a href="https://developers.google.com/web/updates/2017/08/devtools-release-notes#node-screenshots"&gt;Reference&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This has been useful to me, i hope it is to you too. If you have any other tips hit me up in the comments. &lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2018/03/14/converting-mpeg-to-h265/</id><title type="text">Converting MPEG to H.265</title><summary type="html">&lt;h1&gt;Converting MPEG to H.265&lt;/h1&gt;
 
 &lt;p&gt;I recently took a video of a friend's performance with my DSLR and only afterwards recalled just how massive MPEG files are. The 1080p clip was only 7 minutes long but was a whopping 1.1GB! A good thing that my camera does not support 4K ;).&lt;/p&gt;
 
@@ -1194,222 +1254,4 @@ If you add &lt;code&gt;[PersistenceMode(PersistenceMode.InnerProperty)]&lt;/code
 &lt;p&gt;REF: http://www.csharper.net/blog/container&lt;em&gt;user&lt;/em&gt;controls&lt;em&gt;_&lt;/em&gt;user&lt;em&gt;controls&lt;/em&gt;that&lt;em&gt;can&lt;/em&gt;contain&lt;em&gt;other&lt;/em&gt;controls.aspx - Comment by Ego&lt;/p&gt;
 
 &lt;p&gt;also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx&lt;/p&gt;
-</content></entry><entry><id>http://www.badmonkeh.com/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-asp.net/</id><title type="text">Adding a reusable pop-up box using jQuery and ASP.NET</title><summary type="html">&lt;h1&gt;Adding a reusable pop-up box using jQuery and ASP.NET&lt;/h1&gt;
-
-&lt;p&gt;Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.&lt;/p&gt;
-
-&lt;p&gt;Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.&lt;/p&gt;
-
-&lt;p&gt;Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.&lt;/p&gt;
-
-&lt;p&gt;In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public static void RegisterJQueryRemote(Page page)
-{
-    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
-}
-
-public static void RegisterPopup(Page page)
-{
-    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.&lt;/p&gt;
-
-&lt;p&gt;Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. &lt;/p&gt;
-
-&lt;p&gt;This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.&lt;/p&gt;
-
-&lt;p&gt;Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;include jQuery and the popup.js
-Personally i call the above methods in the &lt;code&gt;Page_Load&lt;/code&gt; event&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;create a div with a class "popup", and into this place the code for your popup, e.g.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;```&lt;/p&gt;
-
-  &lt;div id="popup" class="help_titles"&gt;
-    &lt;div&gt;
-        &lt;a id="popupClose"&gt;x&lt;/a&gt;
-        &lt;strong&gt;Rejection Reason&lt;/strong&gt;
-    &lt;/div&gt;                       
-    &lt;p&gt;
-        &lt;asp:TextBox ID="txtRejectionReason" runat="server" /&gt;
-        &lt;asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" /&gt;
-    &lt;/p&gt;
-  &lt;/div&gt;
-
-&lt;p&gt;```  &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;create a div with class "backgroundPopup"
-This just needs to be empty, and will be used to dim the background&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;
-      &amp;lt;div id="popupButton"&amp;gt;&amp;lt;a&amp;gt;Reject&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;&lt;br /&gt;
-      &amp;lt;span id="popupButton"&amp;gt;&amp;lt;input type="button" value="Reject"/&amp;gt;&amp;lt;/span&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;And finally add the required styles.      &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;```
-    #backgroundPopup { 
-        display: none;&lt;br /&gt;
-        _position: absolute; /* hack for internet explorer 6&lt;em&gt;/
-        position: fixed;
-        height: 100%;&lt;br /&gt;
-        width: 100%;&lt;br /&gt;
-        top: 0;&lt;br /&gt;
-        left: 0;&lt;br /&gt;
-        background: #000000;&lt;br /&gt;
-        border: 1px solid #cecece;&lt;br /&gt;
-        z-index: 1; 
-    }&lt;br /&gt;
-    #popup {&lt;br /&gt;
-        width: 300px; 
-        margin-top: 5px; 
-        padding-bottom: 5px; 
-        display: none;
-        _position: absolute; /&lt;/em&gt; hack for internet explorer 6*/
-        position: fixed;
-        z-index: 2; 
-        height: 100px;
-    }
-    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
-    #popup p { margin: 5px; }
-    #popupClose { padding-right: 5px; float: right; font-weight: bold; }&lt;br /&gt;
-    #popupClose:hover { cursor: pointer; }
-    #popupButton { width: 100%; margin-top: 5px; }        &lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.help_titles
-{
-    border: solid 1px #B5B6B5;
-    background-color: #F7F7F7;
-    font-family: Verdana, Arial;
-    font-size: 11px;
-    color: #1C1F7B;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;```    &lt;/p&gt;
-
-&lt;p&gt;Obviously you do not need all of this, you can remove the formatting. But this should get you started.&lt;/p&gt;
-
-&lt;p&gt;And that's about it really.&lt;/p&gt;
-</summary><published>2008-12-30T13:00:00Z</published><updated>2008-12-30T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-asp.net/" /><content type="html">&lt;h1&gt;Adding a reusable pop-up box using jQuery and ASP.NET&lt;/h1&gt;
-
-&lt;p&gt;Using jQuery it is simple to create and show a modal pop-up box with transitional effects. For this guide i sue the code from http://yensdesign.com/2008/09/how-to-create-a-stunning-and-smooth-popup-using-jquery/, but implement it in a reusable way.&lt;/p&gt;
-
-&lt;p&gt;Please note that this works perfectly in Firefox and IE7. To get this to work in IE6 you must set the document type to HTML 4.01 STRICT! Don't blame me, blame Microsoft for their buggy software.&lt;/p&gt;
-
-&lt;p&gt;Now if you have not already done so i'd advise you to create a ClientScriptHelper class to handle loading javascript classes.&lt;/p&gt;
-
-&lt;p&gt;In particular i created methods to load jQuery from the google website, and to load the popup.js which will get into detail below:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public static void RegisterJQueryRemote(Page page)
-{
-    page.ClientScript.RegisterClientScriptInclude("jQuery", "http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js");
-}
-
-public static void RegisterPopup(Page page)
-{
-    page.ClientScript.RegisterClientScriptInclude("popup", page.ResolveClientUrl("~/jscripts/jQuery/popup.js"));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;These methods are just a convenience and allow us to programmtically register the required javascript, if you prefer you can register the scripts yourself manually.&lt;/p&gt;
-
-&lt;p&gt;Now the javascript required for all the loading, hiding and transitional effects i extracted from the above guide and massage to suit my purposes. This i store in a javascript file popup.js as mentioned above. &lt;/p&gt;
-
-&lt;p&gt;This code has been made generic to enable to easily create a popup on any page, however is only designed for a single popup. If you were to have multiple popups you would need to modify the javascript.&lt;/p&gt;
-
-&lt;p&gt;Okay so presuming you have installed the script on your own server the steps to implementing your own popup are as follows:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;include jQuery and the popup.js
-Personally i call the above methods in the &lt;code&gt;Page_Load&lt;/code&gt; event&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;create a div with a class "popup", and into this place the code for your popup, e.g.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;```&lt;/p&gt;
-
-  &lt;div id="popup" class="help_titles"&gt;
-    &lt;div&gt;
-        &lt;a id="popupClose"&gt;x&lt;/a&gt;
-        &lt;strong&gt;Rejection Reason&lt;/strong&gt;
-    &lt;/div&gt;                       
-    &lt;p&gt;
-        &lt;asp:TextBox ID="txtRejectionReason" runat="server" /&gt;
-        &lt;asp:Button ID="btnRejectWithReason" Text="Reject" runat="server" /&gt;
-    &lt;/p&gt;
-  &lt;/div&gt;
-
-&lt;p&gt;```  &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;create a div with class "backgroundPopup"
-This just needs to be empty, and will be used to dim the background&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Add a div/span called "popupButton" and put a link or button inside it. This will be used to launch your pop-up.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;
-      &amp;lt;div id="popupButton"&amp;gt;&amp;lt;a&amp;gt;Reject&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;&lt;br /&gt;
-      &amp;lt;span id="popupButton"&amp;gt;&amp;lt;input type="button" value="Reject"/&amp;gt;&amp;lt;/span&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;And finally add the required styles.      &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;```
-    #backgroundPopup { 
-        display: none;&lt;br /&gt;
-        _position: absolute; /* hack for internet explorer 6&lt;em&gt;/
-        position: fixed;
-        height: 100%;&lt;br /&gt;
-        width: 100%;&lt;br /&gt;
-        top: 0;&lt;br /&gt;
-        left: 0;&lt;br /&gt;
-        background: #000000;&lt;br /&gt;
-        border: 1px solid #cecece;&lt;br /&gt;
-        z-index: 1; 
-    }&lt;br /&gt;
-    #popup {&lt;br /&gt;
-        width: 300px; 
-        margin-top: 5px; 
-        padding-bottom: 5px; 
-        display: none;
-        _position: absolute; /&lt;/em&gt; hack for internet explorer 6*/
-        position: fixed;
-        z-index: 2; 
-        height: 100px;
-    }
-    #popup div { background-color: #E6E6E6; width: 100%; height: 30px; padding-top: 5px }
-    #popup p { margin: 5px; }
-    #popupClose { padding-right: 5px; float: right; font-weight: bold; }&lt;br /&gt;
-    #popupClose:hover { cursor: pointer; }
-    #popupButton { width: 100%; margin-top: 5px; }        &lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.help_titles
-{
-    border: solid 1px #B5B6B5;
-    background-color: #F7F7F7;
-    font-family: Verdana, Arial;
-    font-size: 11px;
-    color: #1C1F7B;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;```    &lt;/p&gt;
-
-&lt;p&gt;Obviously you do not need all of this, you can remove the formatting. But this should get you started.&lt;/p&gt;
-
-&lt;p&gt;And that's about it really.&lt;/p&gt;
 </content></entry></feed>

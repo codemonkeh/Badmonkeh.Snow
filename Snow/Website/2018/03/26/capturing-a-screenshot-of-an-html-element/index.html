@@ -26,7 +26,7 @@
     <![endif]-->
     <meta name="robots" content="noindex,follow">
     <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
-    <link rel="canonical" href="http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-ado.net/" />
+    <link rel="canonical" href="http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/" />
 </head>
 <body class="home blog custom-background single-author two-column right-sidebar">
 	<div id="page" class="hfeed">
@@ -59,36 +59,46 @@
 
 <article class="post type-post status-publish format-standard hentry">
     <header class="entry-header">
-        <h1 class="entry-title">Executing batches of SQL statements using ADO.NET</h1>
+        <h1 class="entry-title">Capturing a screenshot of an HTML element</h1>
 
         <div class="entry-meta">
-            <span class="sep">Posted on </span>05 Nov 2008
+            <span class="sep">Posted on </span>26 Mar 2018
         </div><!-- .entry-meta -->
     </header><!-- .entry-header -->
 
     <div class="entry-content">
         
 
-        <h1>Executing batches of SQL statements using ADO.NET</h1>
+        <h1>Capturing a screenshot of an HTML element</h1>
 
-<p>I was writing an auditing tool recently that generated scripts to create triggers. Of course i wanted to guarantee that these scripts did not fail so i did the right thing and first checked if the trigger existed, and dropped it if it did.</p>
+<p>Ever come across a website you want screenshot but the content spans two pages? Or perhaps you don't want to go through the hassle of editing and cropping the screenshot to isolate the small piece of content on the page that is useful. Well look no further, here is a simple tip on how to capture the content of a specific element only.</p>
 
-<p>Now i wrote these scripts originally in SQL Server Management Studio of course, and used the GO statement to separate them into batches. If you don't do this you will get a horrible error message informing you that CREATE statements must be the first line in a batch.</p>
+<h2>Firefox</h2>
 
-<p>For more information about batches see: http://www.teratrax.com/tsg/help/queries.html</p>
+<ol>
+<li>Right click the element on the page and choose Inspect Element (Q)</li>
+<li>Hover over the tree of elements and ensure that all of the content you want is masked</li>
+<li>Right-click the element and choose Screenshot Node</li>
+<li>Check your downloads folder for the saved image.</li>
+</ol>
 
-<p>Now when i went to execute this scripts on the fly, lo and behold i came upon a familiar error message: '<code>CREATE TRIGGER</code>' must be the first statement in a query batch.</p>
+<p><a href="https://hacks.mozilla.org/2015/09/trainspotting-firefox-41">Reference</a></p>
 
-<p>It turns out for some perverse reason ADO.NET interprets the SQL you give it as a single batch, in fact it must go as far as to strip or ignore all <code>GO</code> statements within it. Logically a <code>Command</code> would appear to be singular, but regardless you would hope that it would execute the SQL as written.</p>
+<h2>Chrome</h2>
 
-<p>So having this in mind there is a very simple solution. The below code splits the SQL into separate batches for singular execution:</p>
+<ol>
+<li>Right click the element on the page and choose Inspect</li>
+<li>Hover over the tree of elements and ensure that all of the content you want is masked</li>
+<li>Open the command menu by typing <code>Ctrl+Shift+P</code></li>
+<li>Type in <code>Node</code> and select the <code>Capture node screenshot</code> command</li>
+<li>Check your downloads folder for the saved image.</li>
+</ol>
 
-<pre><code>string sql = "... your sql ...";
-Regex regex = new Regex("^GO", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-string[] batches = regex.Split(sql);
-</code></pre>
+<p><a href="https://developers.google.com/web/updates/2017/08/devtools-release-notes#node-screenshots">Reference</a></p>
 
-<p>Then of course to execute them you just need to loop through each, and execute it as a separate command.</p>
+<h2>Conclusion</h2>
+
+<p>This has been useful to me, i hope it is to you too. If you have any other tips hit me up in the comments. </p>
 
     </div><!-- .entry-content -->   
     
@@ -100,8 +110,8 @@ string[] batches = regex.Split(sql);
         <span class="sep"> | </span>
         <span class="tag-links">
             <span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
-					<a href="/tag/ado.net" title="Snow.Models.Tag" rel="tag">ado.net</a>,
-					<a href="/tag/sql" title="Snow.Models.Tag" rel="tag">sql</a>,
+					<a href="/tag/firefox" title="Snow.Models.Tag" rel="tag">firefox</a>,
+					<a href="/tag/web-design" title="Snow.Models.Tag" rel="tag">web design</a>,
         </span>
 
         
@@ -113,14 +123,14 @@ string[] batches = regex.Split(sql);
             reload: true,
             config: function () {
                 //this.page.identifier = '';
-                this.page.url = 'http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-ado.net/';
+                this.page.url = 'http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/';
                 //this.page.title = '';
             }
         });
     };
 
     var disqus_shortname = 'badmonkehblog';
-    var disqus_url = 'http://www.badmonkeh.com/2008/11/05/executing-batches-of-sql-statements-using-ado.net/';
+    var disqus_url = 'http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -175,11 +185,11 @@ string[] batches = regex.Split(sql);
                 <aside id="recent-posts-2" class="widget widget_recent_entries">
                     <h3 class="widget-title">Recent Posts</h3>
                     <ul>
+                            <li><a href="/2018/03/26/capturing-a-screenshot-of-an-html-element/">Capturing a screenshot of an HTML element</a></li>
                             <li><a href="/2018/03/14/converting-mpeg-to-h265/">Converting MPEG to H.265</a></li>
                             <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
                             <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
                             <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
-                            <li><a href="/2010/08/14/upgrading-castle-active-recods/">Upgrading Castle Active Records</a></li>
                     </ul>
                 </aside>
             </div><!-- #secondary .widget-area -->
