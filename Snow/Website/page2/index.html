@@ -59,6 +59,138 @@
   <div class="posts">
 	<article class="post type-post status-publish format-standard hentry">
 		<header class="entry-header">
+			<h1 class="entry-title"><a href="/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/">Creating controls that contain other controls (at design time)</a></h1>
+
+			<div class="entry-meta">
+				<span class="sep">Posted on </span>04 Feb 2009
+			</div><!-- .entry-meta -->
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			
+
+			<h1>Creating controls that contain other controls (at design time)</h1>
+
+<p>I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
+There are 2 parts of this.</p>
+
+<ol>
+<li>Adding controls to a collection at design time.
+An example of this would be a <code>DataGrid</code>'s Columns property. e.g.</li>
+</ol>
+
+<p><code>
+    &lt;asp:DataGrid&gt;
+        &lt;Columns&gt;
+            &lt;asp:Column /&gt;
+            &lt;asp:Column /&gt;
+        &lt;/Columns&gt;
+    &lt;/asp:DataGrid&gt;
+</code></p>
+
+<p>These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:</p>
+
+<pre><code>[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
+public virtual DataGridColumnCollection Columns
+{ get; }
+</code></pre>
+
+<p>Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
+The key attribute here is <code>PersistenceMode</code>. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:</p>
+
+<pre><code>public enum PersistenceMode
+{
+    Attribute,
+    InnerProperty,
+    InnerDefaultProperty,
+    EncodedInnerDefaultProperty
+}
+</code></pre>
+
+<p>Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.</p>
+
+<p>The one we are interested in is <code>InnerProperty</code>. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
+If you add <code>[PersistenceMode(PersistenceMode.InnerProperty)]</code> to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.</p>
+
+<p>Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.</p>
+
+<p>Note: In order for this to work properly your control must extend from <code>UserControl</code>and not Control :)</p>
+
+<ol>
+<li>Creating a dynamic templated control to contain other controls</li>
+</ol>
+
+<p>Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.</p>
+
+<p>If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:</p>
+
+<p>```
+    public class TestTab : UserControl
+    {
+        private PlaceHolder _ContentPlaceHolder;
+        private ITemplate _ContentTemplate;</p>
+
+<pre><code>    [PersistenceMode(PersistenceMode.InnerProperty)]
+    [TemplateInstance(TemplateInstance.Single)]
+    public ITemplate ContentTemplate
+    {
+        get { return _ContentTemplate; }
+        set { _ContentTemplate = value; }
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (_ContentPlaceHolder == null)
+        {
+            _ContentPlaceHolder = new PlaceHolder();
+            this.Controls.Add(_ContentPlaceHolder);
+        }
+
+        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
+    }
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Okay, first you need to create a class that extends from <code>UserControl</code>. You can instead extend from Control if you like, but you have to implement the interface <code>INamingContainer</code>. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.</p>
+
+<p>Next add a <code>PlaceHolder</code> to hold the template for obvious reasons. Then create an <code>ITemplate</code> property. The important thing to note here is that you set the <code>PersistenceMode</code> (as defined above) so you can easily set it's contents declaratively.</p>
+
+<p>Also the <code>TemplateInstance.Single</code> attribute value as it allows you to reference the templated controls directly within the page.</p>
+
+<p>Finally the real meat of it. In the <code>OnInit</code> event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.</p>
+
+<p>The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.</p>
+
+<p>I have not tested the ViewState of this, but it should all work.</p>
+
+<p>Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx</p>
+
+<p>Note2: Ensure the controls are create in Init to access them in Page<em>Load (otherwise they'll be created in Page</em>PreRender)</p>
+
+<p>REF: http://www.csharper.net/blog/container<em>user</em>controls<em>_</em>user<em>controls</em>that<em>can</em>contain<em>other</em>controls.aspx - Comment by Ego</p>
+
+<p>also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx</p>
+
+		</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			<span class="cat-links">
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Categories</span> 
+					Software Development
+			</span>
+			<span class="sep"> | </span>
+			<span class="tag-links"> 
+				<span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
+					asp.net, control
+			</span>
+		</footer><!-- .entry-meta -->
+	</article>
+	<article class="post type-post status-publish format-standard hentry">
+		<header class="entry-header">
 			<h1 class="entry-title"><a href="/2008/12/31/adding-a-reusable-pop-up-box-using-jquery-and-aspnet/">Adding a reusable pop-up box using jQuery and ASP.NET</a></h1>
 
 			<div class="entry-meta">
@@ -651,11 +783,11 @@ The problem is that lazy loading relies on creating proxy classes for your recor
                 <aside id="recent-posts-2" class="widget widget_recent_entries">
                     <h3 class="widget-title">Recent Posts</h3>
                     <ul>
+                            <li><a href="/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/">Migrating a website from GoDaddy to AWS for free</a></li>
                             <li><a href="/2018/03/26/capturing-a-screenshot-of-an-html-element/">Capturing a screenshot of an HTML element</a></li>
                             <li><a href="/2018/03/14/converting-mpeg-to-h265/">Converting MPEG to H.265</a></li>
                             <li><a href="/2015/07/07/wix-and-the-tfs-2013-build-server-lets-be-friends/">Wix and the TFS 2013 build server, let's be friends</a></li>
                             <li><a href="/2013/02/12/designdata-makes-your-life-easier/">DesignData makes your life easier</a></li>
-                            <li><a href="/2010/09/11/active-records-with-partial-trust-revisited/">Active Records with Partial Trust, Revisited</a></li>
                     </ul>
                 </aside>
             </div><!-- #secondary .widget-area -->

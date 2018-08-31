@@ -1,4 +1,280 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Don't make me think! - badmonkeh.com</title><subtitle type="text">Don't make me think! - badmonkeh.com</subtitle><id>http://www.badmonkeh.com/</id><updated>2018-03-26T12:10:51+11:00</updated><author><name>Christian Froehlich</name><uri>http://www.badmonkeh.com</uri></author><generator>Sandra.Snow Atom Generator</generator><link rel="alternate" href="http://www.badmonkeh.com/feed.xml" /><link rel="self" type="text/html" title="Don't make me think! - badmonkeh.com" href="http://www.badmonkeh.com/feed.xml" /><entry><id>http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/</id><title type="text">Capturing a screenshot of an HTML element</title><summary type="html">&lt;h1&gt;Capturing a screenshot of an HTML element&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Don't make me think! - badmonkeh.com</title><subtitle type="text">Don't make me think! - badmonkeh.com</subtitle><id>http://www.badmonkeh.com/</id><updated>2018-08-31T21:53:49+10:00</updated><author><name>Christian Froehlich</name><uri>http://www.badmonkeh.com</uri></author><generator>Sandra.Snow Atom Generator</generator><link rel="alternate" href="http://www.badmonkeh.com/feed.xml" /><link rel="self" type="text/html" title="Don't make me think! - badmonkeh.com" href="http://www.badmonkeh.com/feed.xml" /><entry><id>http://www.badmonkeh.com/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/</id><title type="text">Migrating a website from GoDaddy to AWS for free</title><summary type="html">&lt;h1&gt;Migrating a website from GoDaddy to AWS for free&lt;/h1&gt;
+
+&lt;p&gt;Okay so this post has been sitting on the back burner for a while because i have been busy with a new job, but i just wanted to write a little something up about migrating a website to AWS.&lt;/p&gt;
+
+&lt;p&gt;In my situation i had been using GoDaddy as a host for some time however i have never been particularly happy with either their performance or value and i had wanted to find another host for a while.&lt;/p&gt;
+
+&lt;p&gt;As it happens AWS has a free tier that makes a low traffic website like practically free to host, with excellent reliability and performance. So it was a bit of a no brainer.&lt;/p&gt;
+
+&lt;p&gt;I should note that as website is generated from from markdown using Sandra.Snow, it is effectively has no server-side rendering and this guide would be suitable for similar static websites. It is definitely possible to host server side rendered websites and APIs on AWS, but that may cost a little more and is beyond the scope of this article.&lt;/p&gt;
+
+&lt;h2&gt;Migration process&lt;/h2&gt;
+
+&lt;p&gt;This guide largely follows &lt;a href="https://vickylai.io/verbose/aws-static-site"&gt;Vicky Lai's excellent guide&lt;/a&gt; which itself uses the an &lt;a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html"&gt;AWS Guide&lt;/a&gt; but i'll help you out with some of the GoDaddy particulars.&lt;/p&gt;
+
+&lt;h3&gt;Create a website&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Sign up at https://aws.amazon.com/free/&lt;/li&gt;
+&lt;li&gt;Create AWS Bucket(s) to store your website contents
+&lt;ol&gt;
+&lt;li&gt;Use the guide here: https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html&lt;/li&gt;
+&lt;li&gt;Create buckets for your domain and each sub domain (even if they are only for url redirection) with default settings your region, e.g.
+&lt;ol&gt;
+&lt;li&gt;badmonkeh.com&lt;/li&gt;
+&lt;li&gt;www.badmonkeh.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Use a tool such as Cloud Berry to upload website content to your main S3 bucket (the one without a subdomain), e.g badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Assign the policy to make the bucket contents publicly accessible&lt;/li&gt;
+&lt;li&gt;Enable static website hosting in bucket properties for the main bucket
+&lt;ol&gt;
+&lt;li&gt;Properties -&gt; Static Website Hosting&lt;/li&gt;
+&lt;li&gt;Use this bucket to host a website&lt;/li&gt;
+&lt;li&gt;Configure default page&lt;/li&gt;
+&lt;li&gt;Note the endpoint url e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Redirect requests for your 'www' subdomain bucket to your main S3 bucket
+&lt;ol&gt;
+&lt;li&gt;Properties -&gt; Static Website Hosting&lt;/li&gt;
+&lt;li&gt;Redirect requests to main bucket name, e.g. badmonkeh.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;(Optional) configure website / bucket logging - (I skipped this but it is a good idea)
+&lt;ol&gt;
+&lt;li&gt;https://docs.aws.amazon.com/AmazonS3/latest/dev/LoggingWebsiteTraffic.html&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5&gt;Tips:&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You need an S3 bucket for every subdomain (including "www") as well as one for your domain&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;DNS Routing&lt;/h3&gt;
+
+&lt;p&gt;When it comes to DNS routing you have two options, you can either continue to use your domain registrars DNS server, e.g. GoDaddy, or you can set up Route 53. &lt;/p&gt;
+
+&lt;p&gt;Using Route 53 is ideal if you plan to migrate your domain name over, however this will incur a small fee (USD 0.50 / month at time of writing) so bare this into consideration.&lt;/p&gt;
+
+&lt;h4&gt;Using Route 53&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Export DNS records from yuor existing host, e.g. GoDaddy
+&lt;ol&gt;
+&lt;li&gt;GoDaddy &gt; DNS Management&lt;/li&gt;
+&lt;li&gt;Advanced Features &gt; Export Zones File (Windows)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Set up DNS routing using Route 53 Hosted Zone
+&lt;ol&gt;
+&lt;li&gt;AWS &gt; Route 53 &gt; Create Hosted Zone&lt;/li&gt;
+&lt;li&gt;Create Hosted Zone for your domain name, e.g. badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Add alias for your domain and "www" subdomain, e.g. badmonkeh.com and www.badmonkeh.com
+&lt;ol&gt;
+&lt;li&gt;Create Record Set
+&lt;ol&gt;
+&lt;li&gt;Alias: Yes&lt;/li&gt;
+&lt;li&gt;Alias Target: select s3 bucket name, e.g. badmonkeh.com (s3-website-ap-southeast-2.amazonaws.com)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Migrate DNS records to Route 53
+&lt;ol&gt;
+&lt;li&gt;Import Zone File (copy and paste)
+&lt;ol&gt;
+&lt;li&gt;NS - Instead of transferring these, replace their values with the name server values that are provided by Amazon Route 53. &lt;/li&gt;
+&lt;li&gt;SOA - Amazon Route 53 provides this record in the hosted zone with a default value. &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Migrate DNS records in GoDaddy
+&lt;ol&gt;
+&lt;li&gt;Deleted any subdomain records, they will be recreated later&lt;/li&gt;
+&lt;li&gt;Disabled domain forwarding&lt;/li&gt;
+&lt;li&gt;Disabled DNS record management &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5&gt;Tips:&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Make sure you migrate all records, such as MX records to allow custom email providers&lt;/li&gt;
+&lt;li&gt;You may have to delete some entries, such as "@" entries to make the file importable&lt;/li&gt;
+&lt;li&gt;You can always add the records line by line if there are any issues&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4&gt;Using GoDaddy&lt;/h4&gt;
+
+&lt;p&gt;I have found the migrating my domain to GoDaddy was relatively easy and definitely cheaper and i will write this up in a future article.&lt;/p&gt;
+
+&lt;p&gt;However if you plan to keep your domain with GoDaddy you can continue to use their DNS servers, you will just need to update your DNS records.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Update GoDaddy DNS record
+&lt;ol&gt;
+&lt;li&gt;Find website's static subdomain
+&lt;ol&gt;
+&lt;li&gt;Log-in to AWS&lt;/li&gt;
+&lt;li&gt;Go to S3&lt;/li&gt;
+&lt;li&gt;Select website bucket e.g. www.badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Go to Properties&lt;/li&gt;
+&lt;li&gt;Copy Endpoint, e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Update GoDaddy DNS record
+&lt;ol&gt;
+&lt;li&gt;Log in to GoDaddy&lt;/li&gt;
+&lt;li&gt;Go to DNS Management&lt;/li&gt;
+&lt;li&gt;Change CNAME with host "www"
+&lt;ol&gt;
+&lt;li&gt;Points To: "@", Change to endpoint value (without protocol, just the subdomain)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Overall the process is relatively straight forward and offers many potential benefits, but i do encourage you to do your own research and determine if this is suitable for your requirements. &lt;/p&gt;
+
+&lt;p&gt;Further enhancements would be to migrate your domain names and use a CDN such as AWS's CloudFront.&lt;/p&gt;
+</summary><published>2018-08-25T14:00:00Z</published><updated>2018-08-25T14:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/" /><content type="html">&lt;h1&gt;Migrating a website from GoDaddy to AWS for free&lt;/h1&gt;
+
+&lt;p&gt;Okay so this post has been sitting on the back burner for a while because i have been busy with a new job, but i just wanted to write a little something up about migrating a website to AWS.&lt;/p&gt;
+
+&lt;p&gt;In my situation i had been using GoDaddy as a host for some time however i have never been particularly happy with either their performance or value and i had wanted to find another host for a while.&lt;/p&gt;
+
+&lt;p&gt;As it happens AWS has a free tier that makes a low traffic website like practically free to host, with excellent reliability and performance. So it was a bit of a no brainer.&lt;/p&gt;
+
+&lt;p&gt;I should note that as website is generated from from markdown using Sandra.Snow, it is effectively has no server-side rendering and this guide would be suitable for similar static websites. It is definitely possible to host server side rendered websites and APIs on AWS, but that may cost a little more and is beyond the scope of this article.&lt;/p&gt;
+
+&lt;h2&gt;Migration process&lt;/h2&gt;
+
+&lt;p&gt;This guide largely follows &lt;a href="https://vickylai.io/verbose/aws-static-site"&gt;Vicky Lai's excellent guide&lt;/a&gt; which itself uses the an &lt;a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html"&gt;AWS Guide&lt;/a&gt; but i'll help you out with some of the GoDaddy particulars.&lt;/p&gt;
+
+&lt;h3&gt;Create a website&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Sign up at https://aws.amazon.com/free/&lt;/li&gt;
+&lt;li&gt;Create AWS Bucket(s) to store your website contents
+&lt;ol&gt;
+&lt;li&gt;Use the guide here: https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html&lt;/li&gt;
+&lt;li&gt;Create buckets for your domain and each sub domain (even if they are only for url redirection) with default settings your region, e.g.
+&lt;ol&gt;
+&lt;li&gt;badmonkeh.com&lt;/li&gt;
+&lt;li&gt;www.badmonkeh.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Use a tool such as Cloud Berry to upload website content to your main S3 bucket (the one without a subdomain), e.g badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Assign the policy to make the bucket contents publicly accessible&lt;/li&gt;
+&lt;li&gt;Enable static website hosting in bucket properties for the main bucket
+&lt;ol&gt;
+&lt;li&gt;Properties -&gt; Static Website Hosting&lt;/li&gt;
+&lt;li&gt;Use this bucket to host a website&lt;/li&gt;
+&lt;li&gt;Configure default page&lt;/li&gt;
+&lt;li&gt;Note the endpoint url e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Redirect requests for your 'www' subdomain bucket to your main S3 bucket
+&lt;ol&gt;
+&lt;li&gt;Properties -&gt; Static Website Hosting&lt;/li&gt;
+&lt;li&gt;Redirect requests to main bucket name, e.g. badmonkeh.com&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;(Optional) configure website / bucket logging - (I skipped this but it is a good idea)
+&lt;ol&gt;
+&lt;li&gt;https://docs.aws.amazon.com/AmazonS3/latest/dev/LoggingWebsiteTraffic.html&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5&gt;Tips:&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You need an S3 bucket for every subdomain (including "www") as well as one for your domain&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;DNS Routing&lt;/h3&gt;
+
+&lt;p&gt;When it comes to DNS routing you have two options, you can either continue to use your domain registrars DNS server, e.g. GoDaddy, or you can set up Route 53. &lt;/p&gt;
+
+&lt;p&gt;Using Route 53 is ideal if you plan to migrate your domain name over, however this will incur a small fee (USD 0.50 / month at time of writing) so bare this into consideration.&lt;/p&gt;
+
+&lt;h4&gt;Using Route 53&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Export DNS records from yuor existing host, e.g. GoDaddy
+&lt;ol&gt;
+&lt;li&gt;GoDaddy &gt; DNS Management&lt;/li&gt;
+&lt;li&gt;Advanced Features &gt; Export Zones File (Windows)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Set up DNS routing using Route 53 Hosted Zone
+&lt;ol&gt;
+&lt;li&gt;AWS &gt; Route 53 &gt; Create Hosted Zone&lt;/li&gt;
+&lt;li&gt;Create Hosted Zone for your domain name, e.g. badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Add alias for your domain and "www" subdomain, e.g. badmonkeh.com and www.badmonkeh.com
+&lt;ol&gt;
+&lt;li&gt;Create Record Set
+&lt;ol&gt;
+&lt;li&gt;Alias: Yes&lt;/li&gt;
+&lt;li&gt;Alias Target: select s3 bucket name, e.g. badmonkeh.com (s3-website-ap-southeast-2.amazonaws.com)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Migrate DNS records to Route 53
+&lt;ol&gt;
+&lt;li&gt;Import Zone File (copy and paste)
+&lt;ol&gt;
+&lt;li&gt;NS - Instead of transferring these, replace their values with the name server values that are provided by Amazon Route 53. &lt;/li&gt;
+&lt;li&gt;SOA - Amazon Route 53 provides this record in the hosted zone with a default value. &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Migrate DNS records in GoDaddy
+&lt;ol&gt;
+&lt;li&gt;Deleted any subdomain records, they will be recreated later&lt;/li&gt;
+&lt;li&gt;Disabled domain forwarding&lt;/li&gt;
+&lt;li&gt;Disabled DNS record management &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5&gt;Tips:&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Make sure you migrate all records, such as MX records to allow custom email providers&lt;/li&gt;
+&lt;li&gt;You may have to delete some entries, such as "@" entries to make the file importable&lt;/li&gt;
+&lt;li&gt;You can always add the records line by line if there are any issues&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4&gt;Using GoDaddy&lt;/h4&gt;
+
+&lt;p&gt;I have found the migrating my domain to GoDaddy was relatively easy and definitely cheaper and i will write this up in a future article.&lt;/p&gt;
+
+&lt;p&gt;However if you plan to keep your domain with GoDaddy you can continue to use their DNS servers, you will just need to update your DNS records.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Update GoDaddy DNS record
+&lt;ol&gt;
+&lt;li&gt;Find website's static subdomain
+&lt;ol&gt;
+&lt;li&gt;Log-in to AWS&lt;/li&gt;
+&lt;li&gt;Go to S3&lt;/li&gt;
+&lt;li&gt;Select website bucket e.g. www.badmonkeh.com&lt;/li&gt;
+&lt;li&gt;Go to Properties&lt;/li&gt;
+&lt;li&gt;Copy Endpoint, e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com &lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Update GoDaddy DNS record
+&lt;ol&gt;
+&lt;li&gt;Log in to GoDaddy&lt;/li&gt;
+&lt;li&gt;Go to DNS Management&lt;/li&gt;
+&lt;li&gt;Change CNAME with host "www"
+&lt;ol&gt;
+&lt;li&gt;Points To: "@", Change to endpoint value (without protocol, just the subdomain)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Overall the process is relatively straight forward and offers many potential benefits, but i do encourage you to do your own research and determine if this is suitable for your requirements. &lt;/p&gt;
+
+&lt;p&gt;Further enhancements would be to migrate your domain names and use a CDN such as AWS's CloudFront.&lt;/p&gt;
+</content></entry><entry><id>http://www.badmonkeh.com/2018/03/26/capturing-a-screenshot-of-an-html-element/</id><title type="text">Capturing a screenshot of an HTML element</title><summary type="html">&lt;h1&gt;Capturing a screenshot of an HTML element&lt;/h1&gt;
 
 &lt;p&gt;Ever come across a website you want screenshot but the content spans two pages? Or perhaps you don't want to go through the hassle of editing and cropping the screenshot to isolate the small piece of content on the page that is useful. Well look no further, here is a simple tip on how to capture the content of a specific element only.&lt;/p&gt;
 
@@ -1044,214 +1320,4 @@ class MyControl : Control
     */
 }
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><id>http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/</id><title type="text">Creating controls that contain other controls (at design time)</title><summary type="html">&lt;h1&gt;Creating controls that contain other controls (at design time)&lt;/h1&gt;
-
-&lt;p&gt;I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
-There are 2 parts of this.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Adding controls to a collection at design time.
-An example of this would be a &lt;code&gt;DataGrid&lt;/code&gt;'s Columns property. e.g.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;
-    &amp;lt;asp:DataGrid&amp;gt;
-        &amp;lt;Columns&amp;gt;
-            &amp;lt;asp:Column /&amp;gt;
-            &amp;lt;asp:Column /&amp;gt;
-        &amp;lt;/Columns&amp;gt;
-    &amp;lt;/asp:DataGrid&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
-public virtual DataGridColumnCollection Columns
-{ get; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
-The key attribute here is &lt;code&gt;PersistenceMode&lt;/code&gt;. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public enum PersistenceMode
-{
-    Attribute,
-    InnerProperty,
-    InnerDefaultProperty,
-    EncodedInnerDefaultProperty
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.&lt;/p&gt;
-
-&lt;p&gt;The one we are interested in is &lt;code&gt;InnerProperty&lt;/code&gt;. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
-If you add &lt;code&gt;[PersistenceMode(PersistenceMode.InnerProperty)]&lt;/code&gt; to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.&lt;/p&gt;
-
-&lt;p&gt;Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.&lt;/p&gt;
-
-&lt;p&gt;Note: In order for this to work properly your control must extend from &lt;code&gt;UserControl&lt;/code&gt;and not Control :)&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Creating a dynamic templated control to contain other controls&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.&lt;/p&gt;
-
-&lt;p&gt;If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:&lt;/p&gt;
-
-&lt;p&gt;```
-    public class TestTab : UserControl
-    {
-        private PlaceHolder _ContentPlaceHolder;
-        private ITemplate _ContentTemplate;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    [PersistenceMode(PersistenceMode.InnerProperty)]
-    [TemplateInstance(TemplateInstance.Single)]
-    public ITemplate ContentTemplate
-    {
-        get { return _ContentTemplate; }
-        set { _ContentTemplate = value; }
-    }
-
-    protected override void OnInit(EventArgs e)
-    {
-        base.OnInit(e);
-
-        if (_ContentPlaceHolder == null)
-        {
-            _ContentPlaceHolder = new PlaceHolder();
-            this.Controls.Add(_ContentPlaceHolder);
-        }
-
-        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;```&lt;/p&gt;
-
-&lt;p&gt;Okay, first you need to create a class that extends from &lt;code&gt;UserControl&lt;/code&gt;. You can instead extend from Control if you like, but you have to implement the interface &lt;code&gt;INamingContainer&lt;/code&gt;. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.&lt;/p&gt;
-
-&lt;p&gt;Next add a &lt;code&gt;PlaceHolder&lt;/code&gt; to hold the template for obvious reasons. Then create an &lt;code&gt;ITemplate&lt;/code&gt; property. The important thing to note here is that you set the &lt;code&gt;PersistenceMode&lt;/code&gt; (as defined above) so you can easily set it's contents declaratively.&lt;/p&gt;
-
-&lt;p&gt;Also the &lt;code&gt;TemplateInstance.Single&lt;/code&gt; attribute value as it allows you to reference the templated controls directly within the page.&lt;/p&gt;
-
-&lt;p&gt;Finally the real meat of it. In the &lt;code&gt;OnInit&lt;/code&gt; event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.&lt;/p&gt;
-
-&lt;p&gt;The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.&lt;/p&gt;
-
-&lt;p&gt;I have not tested the ViewState of this, but it should all work.&lt;/p&gt;
-
-&lt;p&gt;Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx&lt;/p&gt;
-
-&lt;p&gt;Note2: Ensure the controls are create in Init to access them in Page&lt;em&gt;Load (otherwise they'll be created in Page&lt;/em&gt;PreRender)&lt;/p&gt;
-
-&lt;p&gt;REF: http://www.csharper.net/blog/container&lt;em&gt;user&lt;/em&gt;controls&lt;em&gt;_&lt;/em&gt;user&lt;em&gt;controls&lt;/em&gt;that&lt;em&gt;can&lt;/em&gt;contain&lt;em&gt;other&lt;/em&gt;controls.aspx - Comment by Ego&lt;/p&gt;
-
-&lt;p&gt;also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx&lt;/p&gt;
-</summary><published>2009-02-03T13:00:00Z</published><updated>2009-02-03T13:00:00Z</updated><link rel="alternate" href="http://www.badmonkeh.com/2009/02/04/creating-controls-that-contain-other-controls-at-design-time/" /><content type="html">&lt;h1&gt;Creating controls that contain other controls (at design time)&lt;/h1&gt;
-
-&lt;p&gt;I oft wondered how to create controls that accept static controls (defined in the .aspx page at design time) as content. This is very useful for designing the "look" of the output, especially in a databind control such as a repeater.
-There are 2 parts of this.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Adding controls to a collection at design time.
-An example of this would be a &lt;code&gt;DataGrid&lt;/code&gt;'s Columns property. e.g.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;
-    &amp;lt;asp:DataGrid&amp;gt;
-        &amp;lt;Columns&amp;gt;
-            &amp;lt;asp:Column /&amp;gt;
-            &amp;lt;asp:Column /&amp;gt;
-        &amp;lt;/Columns&amp;gt;
-    &amp;lt;/asp:DataGrid&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;These Column controls will be instantiated at runtime and added to the DataGrids Columns collection. To see how this works lets examine the code for the DataGrid property:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[MergableProperty(false), DefaultValue((string) null), PersistenceMode(PersistenceMode.InnerProperty), WebSysDescription("DataControls_Columns"), Editor("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor)), WebCategory("Default")]
-public virtual DataGridColumnCollection Columns
-{ get; }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now i have omitted the actual code of the property as it's not relevant, what is relevant is the attributes. However, notice that a set property is not even defined. How is that possible?
-The key attribute here is &lt;code&gt;PersistenceMode&lt;/code&gt;. This property defines how a property is persisted to HTML at design time. Let's have a look at all the available values:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public enum PersistenceMode
-{
-    Attribute,
-    InnerProperty,
-    InnerDefaultProperty,
-    EncodedInnerDefaultProperty
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now by default all of the properties of your server control will be specified as Attribute. As the name implies this property will be accessible as an attribute from your controls tag.&lt;/p&gt;
-
-&lt;p&gt;The one we are interested in is &lt;code&gt;InnerProperty&lt;/code&gt;. This means that your property will be rendered as an element with your controls tag, this is exactly how a the Columns collection works on a DataGrid!
-If you add &lt;code&gt;[PersistenceMode(PersistenceMode.InnerProperty)]&lt;/code&gt; to a strongly type collection, then voila! You will be able to add strongly typed controls to your collection at design time.&lt;/p&gt;
-
-&lt;p&gt;Oh and for completion the other 2 enum values allow you to specific that a particular Property will be default value of a tag. i.e. The value between the opening and closing tag of your control, just like a Label. The second just implies that the value will be HTML encoded.&lt;/p&gt;
-
-&lt;p&gt;Note: In order for this to work properly your control must extend from &lt;code&gt;UserControl&lt;/code&gt;and not Control :)&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Creating a dynamic templated control to contain other controls&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Surprisingly there isn't a whole lot of information out there that is specific to this particular example. In this case i want to have a control that can contain other controls, without having an .ascx file.&lt;/p&gt;
-
-&lt;p&gt;If you just want a container and no data-binding then this is actually quite easy to do. I'll show you my code and then go through it:&lt;/p&gt;
-
-&lt;p&gt;```
-    public class TestTab : UserControl
-    {
-        private PlaceHolder _ContentPlaceHolder;
-        private ITemplate _ContentTemplate;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    [PersistenceMode(PersistenceMode.InnerProperty)]
-    [TemplateInstance(TemplateInstance.Single)]
-    public ITemplate ContentTemplate
-    {
-        get { return _ContentTemplate; }
-        set { _ContentTemplate = value; }
-    }
-
-    protected override void OnInit(EventArgs e)
-    {
-        base.OnInit(e);
-
-        if (_ContentPlaceHolder == null)
-        {
-            _ContentPlaceHolder = new PlaceHolder();
-            this.Controls.Add(_ContentPlaceHolder);
-        }
-
-        _ContentTemplate.InstantiateIn(_ContentPlaceHolder);
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;```&lt;/p&gt;
-
-&lt;p&gt;Okay, first you need to create a class that extends from &lt;code&gt;UserControl&lt;/code&gt;. You can instead extend from Control if you like, but you have to implement the interface &lt;code&gt;INamingContainer&lt;/code&gt;. This interface does not actually have any methods, it just signifies to the framework that this control will become a naming container. This just means that the controls within ours will have unique id's, which is more applicable to a repeating control but i digress.&lt;/p&gt;
-
-&lt;p&gt;Next add a &lt;code&gt;PlaceHolder&lt;/code&gt; to hold the template for obvious reasons. Then create an &lt;code&gt;ITemplate&lt;/code&gt; property. The important thing to note here is that you set the &lt;code&gt;PersistenceMode&lt;/code&gt; (as defined above) so you can easily set it's contents declaratively.&lt;/p&gt;
-
-&lt;p&gt;Also the &lt;code&gt;TemplateInstance.Single&lt;/code&gt; attribute value as it allows you to reference the templated controls directly within the page.&lt;/p&gt;
-
-&lt;p&gt;Finally the real meat of it. In the &lt;code&gt;OnInit&lt;/code&gt; event you need to create the content place holder to store your contained controls and add it to the control tree. It is important that you do it in this event so that ViewState is enabled for your sub controls.&lt;/p&gt;
-
-&lt;p&gt;The crucial line after that is that you instantiate the templated controls into your place holder. This will replace the place holder with whatever controls were in the template.&lt;/p&gt;
-
-&lt;p&gt;I have not tested the ViewState of this, but it should all work.&lt;/p&gt;
-
-&lt;p&gt;Note, if you do wish to create templates with values please see the MSDN article: http://msdn.microsoft.com/en-us/library/36574bf6(VS.80).aspx&lt;/p&gt;
-
-&lt;p&gt;Note2: Ensure the controls are create in Init to access them in Page&lt;em&gt;Load (otherwise they'll be created in Page&lt;/em&gt;PreRender)&lt;/p&gt;
-
-&lt;p&gt;REF: http://www.csharper.net/blog/container&lt;em&gt;user&lt;/em&gt;controls&lt;em&gt;_&lt;/em&gt;user&lt;em&gt;controls&lt;/em&gt;that&lt;em&gt;can&lt;/em&gt;contain&lt;em&gt;other&lt;/em&gt;controls.aspx - Comment by Ego&lt;/p&gt;
-
-&lt;p&gt;also of interest: http://msdn.microsoft.com/en-us/library/aa478964.aspx, http://msdn.microsoft.com/en-us/library/aa479300.aspx&lt;/p&gt;
 </content></entry></feed>

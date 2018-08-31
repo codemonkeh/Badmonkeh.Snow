@@ -26,22 +26,22 @@ This guide largely follows [Vicky Lai's excellent guide](https://vickylai.io/ver
 
 1. Sign up at https://aws.amazon.com/free/
 2. Create AWS Bucket(s) to store your website contents
-	a. Use the guide here: https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html
-	b. Create buckets for your domain and each sub domain (even if they are only for url redirection) with default settings your region, e.g.
-		i. badmonkeh.com
-		ii. www.badmonkeh.com
+    1. Use the guide here: https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html
+	2. Create buckets for your domain and each sub domain (even if they are only for url redirection) with default settings your region, e.g.
+		1. badmonkeh.com
+		2. www.badmonkeh.com
 3. Use a tool such as Cloud Berry to upload website content to your main S3 bucket (the one without a subdomain), e.g badmonkeh.com
 4. Assign the policy to make the bucket contents publicly accessible
 5. Enable static website hosting in bucket properties for the main bucket
-	a. Properties -> Static Website Hosting
-	b. Use this bucket to host a website
-	c. Configure default page
-	d. Note the endpoint url e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com
+	1. Properties -> Static Website Hosting
+	2. Use this bucket to host a website
+	3. Configure default page
+	4. Note the endpoint url e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com
 6. Redirect requests for your 'www' subdomain bucket to your main S3 bucket
-	a. Properties -> Static Website Hosting
-	b. Redirect requests to main bucket name, e.g. badmonkeh.com
+	1. Properties -> Static Website Hosting
+	2. Redirect requests to main bucket name, e.g. badmonkeh.com
 7. (Optional) configure website / bucket logging - (I skipped this but it is a good idea)
-	a. https://docs.aws.amazon.com/AmazonS3/latest/dev/LoggingWebsiteTraffic.html
+	1. https://docs.aws.amazon.com/AmazonS3/latest/dev/LoggingWebsiteTraffic.html
 
 ##### Tips:
 
@@ -59,20 +59,20 @@ Using Route 53 is ideal if you plan to migrate your domain name over, however th
     1. GoDaddy > DNS Management
     2. Advanced Features > Export Zones File (Windows)
 2. Set up DNS routing using Route 53 Hosted Zone
-    a. AWS > Route 53 > Create Hosted Zone
-    a. Create Hosted Zone for your domain name, e.g. badmonkeh.com
-	b. Add alias for your domain and "www" subdomain, e.g. badmonkeh.com and www.badmonkeh.com
-		i. Create Record Set
-			1) Alias: Yes
-			2) Alias Target: select s3 bucket name, e.g. badmonkeh.com (s3-website-ap-southeast-2.amazonaws.com)
+    1. AWS > Route 53 > Create Hosted Zone
+    2. Create Hosted Zone for your domain name, e.g. badmonkeh.com
+	3. Add alias for your domain and "www" subdomain, e.g. badmonkeh.com and www.badmonkeh.com
+		1. Create Record Set
+			1. Alias: Yes
+			2. Alias Target: select s3 bucket name, e.g. badmonkeh.com (s3-website-ap-southeast-2.amazonaws.com)
 6. Migrate DNS records to Route 53
-	a. Import Zone File (copy and paste)
-		i. NS - Instead of transferring these, replace their values with the name server values that are provided by Amazon Route 53. 
-		ii. SOA - Amazon Route 53 provides this record in the hosted zone with a default value. 
+	1. Import Zone File (copy and paste)
+		1. NS - Instead of transferring these, replace their values with the name server values that are provided by Amazon Route 53. 
+		2. SOA - Amazon Route 53 provides this record in the hosted zone with a default value. 
 7. Migrate DNS records in GoDaddy
-		i. Deleted any subdomain records, they will be recreated later
-		ii. Disabled domain forwarding
-		iv. Disabled DNS record management 
+	1. Deleted any subdomain records, they will be recreated later
+	2. Disabled domain forwarding
+	3. Disabled DNS record management 
 
 ##### Tips:
 
@@ -88,19 +88,19 @@ I have found the migrating my domain to GoDaddy was relatively easy and definite
 However if you plan to keep your domain with GoDaddy you can continue to use their DNS servers, you will just need to update your DNS records.
 
 1. Update GoDaddy DNS record
-    a. Find website's static subdomain
-		i. Log-in to AWS
-		ii. Go to S3
-		iii. Select website bucket e.g. www.badmonkeh.com
-		iv. Go to Properties
-		v. Copy Endpoint, e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com 
-	b. Update GoDaddy DNS record
-		i. Log in to GoDaddy
-		ii. Go to DNS Management
-		iii. Change CNAME with host "www"
-			1) Points To: "@", Change to endpoint value (without protocol, just the subdomain)
+    1. Find website's static subdomain
+		1. Log-in to AWS
+		2. Go to S3
+		3. Select website bucket e.g. www.badmonkeh.com
+		4. Go to Properties
+		5. Copy Endpoint, e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com 
+	2. Update GoDaddy DNS record
+		1. Log in to GoDaddy
+		2. Go to DNS Management
+		3. Change CNAME with host "www"
+			1. Points To: "@", Change to endpoint value (without protocol, just the subdomain)
 
-### Conclusion
+## Conclusion
 
 Overall the process is relatively straight forward and offers many potential benefits, but i do encourage you to do your own research and determine if this is suitable for your requirements. 
 

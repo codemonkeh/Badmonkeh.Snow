@@ -26,7 +26,7 @@
     <![endif]-->
     <meta name="robots" content="noindex,follow">
     <link rel="alternate" type="application/rss+xml" title="Don't make me think » Feed" href="/feed/">
-    <link rel="canonical" href="http://www.badmonkeh.com/2008/09/25/active-records-partial-trust/" />
+    <link rel="canonical" href="http://www.badmonkeh.com/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/" />
 </head>
 <body class="home blog custom-background single-author two-column right-sidebar">
 	<div id="page" class="hfeed">
@@ -59,50 +59,154 @@
 
 <article class="post type-post status-publish format-standard hentry">
     <header class="entry-header">
-        <h1 class="entry-title">Compiling Castle Active Records for a Partial Trust Environment</h1>
+        <h1 class="entry-title">Migrating a website from GoDaddy to AWS for free</h1>
 
         <div class="entry-meta">
-            <span class="sep">Posted on </span>25 Sep 2008
+            <span class="sep">Posted on </span>26 Aug 2018
         </div><!-- .entry-meta -->
     </header><!-- .entry-header -->
 
     <div class="entry-content">
         
 
-        <h1>Compiling Castle Active Records for a Partial Trust Environment</h1>
+        <h1>Migrating a website from GoDaddy to AWS for free</h1>
 
-<p>Castle Active Record's is a brilliant object relational data-mapper that sits on top of nHibernate. Essentially this allows me to abstract the majority of my database calls away but creating a set of classes with a few additional properties attached to them.</p>
+<p>Okay so this post has been sitting on the back burner for a while because i have been busy with a new job, but i just wanted to write a little something up about migrating a website to AWS.</p>
 
-<p>I am currently using this system at work in several projects and personally i love it. It allows me to quickly reflect changes in the database, and the about 95% of all queries i can now write in code against objects.</p>
+<p>In my situation i had been using GoDaddy as a host for some time however i have never been particularly happy with either their performance or value and i had wanted to find another host for a while.</p>
 
-<h2>How to compile for partial trust</h2>
+<p>As it happens AWS has a free tier that makes a low traffic website like practically free to host, with excellent reliability and performance. So it was a bit of a no brainer.</p>
 
-<p>Checked out the latest source from SVN
-Installed the latest version of nant 0.86b1
-Put the nant bin directory in my path
-Ran the following statement</p>
+<p>I should note that as website is generated from from markdown using Sandra.Snow, it is effectively has no server-side rendering and this guide would be suitable for similar static websites. It is definitely possible to host server side rendered websites and APIs on AWS, but that may cost a little more and is beyond the scope of this article.</p>
 
-<pre><code>nant -D:common.testrunner.enabled=false -D:assembly.allow-partially-trusted-callers=true
-</code></pre>
+<h2>Migration process</h2>
 
-<p>It built successfully (for .net 3.5) with 2 non-fatal errors. Recommends a later version of nant (the nightly build)
-Downloaded the latest nightly build (2008-08-18)
-Recompiled using this nant with the same parameters
-Built again with 2 non-fatal errors
-And voila you should be done with your files in the "build" directory    </p>
+<p>This guide largely follows <a href="https://vickylai.io/verbose/aws-static-site">Vicky Lai's excellent guide</a> which itself uses the an <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html">AWS Guide</a> but i'll help you out with some of the GoDaddy particulars.</p>
 
-<p>It's important to note that you can create the assemblies as unsigned (by specifying -D:sign=false) but this will cause you issues if you wish to enable lazy loading later on       </p>
+<h3>Create a website</h3>
 
-<pre><code>D:\Dev\Tools\nant-0.86-nightly-2008-08-18\bin\nant -D:common.testrunner.enabled=false -D:assembly.allow-partially-trusted-callers=true
-</code></pre>
+<ol>
+<li>Sign up at https://aws.amazon.com/free/</li>
+<li>Create AWS Bucket(s) to store your website contents
+<ol>
+<li>Use the guide here: https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html</li>
+<li>Create buckets for your domain and each sub domain (even if they are only for url redirection) with default settings your region, e.g.
+<ol>
+<li>badmonkeh.com</li>
+<li>www.badmonkeh.com</li>
+</ol></li>
+</ol></li>
+<li>Use a tool such as Cloud Berry to upload website content to your main S3 bucket (the one without a subdomain), e.g badmonkeh.com</li>
+<li>Assign the policy to make the bucket contents publicly accessible</li>
+<li>Enable static website hosting in bucket properties for the main bucket
+<ol>
+<li>Properties -> Static Website Hosting</li>
+<li>Use this bucket to host a website</li>
+<li>Configure default page</li>
+<li>Note the endpoint url e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com</li>
+</ol></li>
+<li>Redirect requests for your 'www' subdomain bucket to your main S3 bucket
+<ol>
+<li>Properties -> Static Website Hosting</li>
+<li>Redirect requests to main bucket name, e.g. badmonkeh.com</li>
+</ol></li>
+<li>(Optional) configure website / bucket logging - (I skipped this but it is a good idea)
+<ol>
+<li>https://docs.aws.amazon.com/AmazonS3/latest/dev/LoggingWebsiteTraffic.html</li>
+</ol></li>
+</ol>
 
-<h2>Links:</h2>
+<h5>Tips:</h5>
 
 <ul>
-<li>http://forum.castleproject.org/viewtopic.php?t=1439</li>
-<li>http://forum.castleproject.org/viewtopic.php?t=4659&amp;sid=9a6619df040193fb021198a62f899cfd</li>
-<li>http://vhendriks.wordpress.com/2007/11/21/monorail-on-shared-hosting/</li>
+<li>You need an S3 bucket for every subdomain (including "www") as well as one for your domain</li>
 </ul>
+
+<h3>DNS Routing</h3>
+
+<p>When it comes to DNS routing you have two options, you can either continue to use your domain registrars DNS server, e.g. GoDaddy, or you can set up Route 53. </p>
+
+<p>Using Route 53 is ideal if you plan to migrate your domain name over, however this will incur a small fee (USD 0.50 / month at time of writing) so bare this into consideration.</p>
+
+<h4>Using Route 53</h4>
+
+<ol>
+<li>Export DNS records from yuor existing host, e.g. GoDaddy
+<ol>
+<li>GoDaddy > DNS Management</li>
+<li>Advanced Features > Export Zones File (Windows)</li>
+</ol></li>
+<li>Set up DNS routing using Route 53 Hosted Zone
+<ol>
+<li>AWS > Route 53 > Create Hosted Zone</li>
+<li>Create Hosted Zone for your domain name, e.g. badmonkeh.com</li>
+<li>Add alias for your domain and "www" subdomain, e.g. badmonkeh.com and www.badmonkeh.com
+<ol>
+<li>Create Record Set
+<ol>
+<li>Alias: Yes</li>
+<li>Alias Target: select s3 bucket name, e.g. badmonkeh.com (s3-website-ap-southeast-2.amazonaws.com)</li>
+</ol></li>
+</ol></li>
+</ol></li>
+<li>Migrate DNS records to Route 53
+<ol>
+<li>Import Zone File (copy and paste)
+<ol>
+<li>NS - Instead of transferring these, replace their values with the name server values that are provided by Amazon Route 53. </li>
+<li>SOA - Amazon Route 53 provides this record in the hosted zone with a default value. </li>
+</ol></li>
+</ol></li>
+<li>Migrate DNS records in GoDaddy
+<ol>
+<li>Deleted any subdomain records, they will be recreated later</li>
+<li>Disabled domain forwarding</li>
+<li>Disabled DNS record management </li>
+</ol></li>
+</ol>
+
+<h5>Tips:</h5>
+
+<ul>
+<li>Make sure you migrate all records, such as MX records to allow custom email providers</li>
+<li>You may have to delete some entries, such as "@" entries to make the file importable</li>
+<li>You can always add the records line by line if there are any issues</li>
+</ul>
+
+<h4>Using GoDaddy</h4>
+
+<p>I have found the migrating my domain to GoDaddy was relatively easy and definitely cheaper and i will write this up in a future article.</p>
+
+<p>However if you plan to keep your domain with GoDaddy you can continue to use their DNS servers, you will just need to update your DNS records.</p>
+
+<ol>
+<li>Update GoDaddy DNS record
+<ol>
+<li>Find website's static subdomain
+<ol>
+<li>Log-in to AWS</li>
+<li>Go to S3</li>
+<li>Select website bucket e.g. www.badmonkeh.com</li>
+<li>Go to Properties</li>
+<li>Copy Endpoint, e.g. http://badmonkeh.com.s3-website-ap-southeast-2.amazonaws.com </li>
+</ol></li>
+<li>Update GoDaddy DNS record
+<ol>
+<li>Log in to GoDaddy</li>
+<li>Go to DNS Management</li>
+<li>Change CNAME with host "www"
+<ol>
+<li>Points To: "@", Change to endpoint value (without protocol, just the subdomain)</li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol>
+
+<h2>Conclusion</h2>
+
+<p>Overall the process is relatively straight forward and offers many potential benefits, but i do encourage you to do your own research and determine if this is suitable for your requirements. </p>
+
+<p>Further enhancements would be to migrate your domain names and use a CDN such as AWS's CloudFront.</p>
 
     </div><!-- .entry-content -->   
     
@@ -114,12 +218,8 @@ And voila you should be done with your files in the "build" directory    </p>
         <span class="sep"> | </span>
         <span class="tag-links">
             <span class="entry-utility-prep entry-utility-prep-tag-links">Tagged</span> 
-					<a href="/tag/.net" title="Snow.Models.Tag" rel="tag">.net</a>,
-					<a href="/tag/active-records" title="Snow.Models.Tag" rel="tag">Active Records</a>,
-					<a href="/tag/c" title="Snow.Models.Tag" rel="tag">c#</a>,
-					<a href="/tag/castle" title="Snow.Models.Tag" rel="tag">Castle</a>,
-					<a href="/tag/nant" title="Snow.Models.Tag" rel="tag">nant</a>,
-					<a href="/tag/orm" title="Snow.Models.Tag" rel="tag">ORM</a>,
+					<a href="/tag/aws" title="Snow.Models.Tag" rel="tag">aws</a>,
+					<a href="/tag/web-hosting" title="Snow.Models.Tag" rel="tag">web hosting</a>,
         </span>
 
         
@@ -131,14 +231,14 @@ And voila you should be done with your files in the "build" directory    </p>
             reload: true,
             config: function () {
                 //this.page.identifier = '';
-                this.page.url = 'http://www.badmonkeh.com/2008/09/25/active-records-partial-trust/';
+                this.page.url = 'http://www.badmonkeh.com/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/';
                 //this.page.title = '';
             }
         });
     };
 
     var disqus_shortname = 'badmonkehblog';
-    var disqus_url = 'http://www.badmonkeh.com/2008/09/25/active-records-partial-trust/';
+    var disqus_url = 'http://www.badmonkeh.com/2018/08/26/migrating-a-website-from-godaddy-to-aws-for-free/';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
